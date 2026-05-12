@@ -1,60 +1,60 @@
-* {
-	margin:  0px;
-	padding:  0px;
-	box-sizing: border-box;
-}
-
-/* adjusting fonts */
-
+/* assets/style.css 에 추가해 보세요 */
 body {
-	font-family: -apple-system, BlinkMacSystemFont, helvetica, arial, sans-serif;
-	transition: background 500ms ease;
-}
-
-p, li {
-	font-size:  22px;
-	line-height: 30px;
-}
-
-/* adjusting spacing */
-
-#left-column {
-	padding: 20px;
-}
-
-h1, p {
-	margin-bottom:  20px;
-}
-
-ul, ol {
-	margin-left: 20px;
-}
-
-img {
-	max-width: 100%;
-	height:  auto;
-}
-
-/* uncomment the code below to set the grid */
-
-/*#grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-}
-
-body {
-	overflow: hidden;
-}
-
-.scroll {
-	padding:  20px;
-	overflow: scroll;
-	height: 100vh;
+  background-color: #000000;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Stretch Pro', sans-serif;
 }
 
 #left-column {
+  text-align: center;
 }
 
-#right-column {
-	background: #333;
-}*/
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  margin: 10px 0;
+  font-size: 0.8rem;
+}
+
+a {
+  color: #ffffff;
+}
+
+a {
+  transition: all 0.5s ease-out; /* 부드러운 변화를 위해 필수 */
+  cursor: pointer;
+}
+
+a:hover {
+  letter-spacing: 5px;
+  color: #FF3DF2; /* 원하는 색상으로 변경 (예: 노란색/메탈 골드) */
+}
+
+h1 {
+	font-weight: 850;
+	font-size: 2.2rem;
+}
+
+h3 {
+  font-family: 'Stretch Pro';
+  font-size: 0.9rem;
+  color: #C0FF11
+}
+
+h1 {
+  transition: all 0.5s ease-out; /* 부드러운 변화를 위해 필수 */
+  cursor: pointer;
+}
+
+h1:hover {
+  letter-spacing: 10px; /* 자간이 넓어짐 */
+  color: #266BFF;      /* 마젠타 핑크로 변경 */
+}
