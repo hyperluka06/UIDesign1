@@ -1,8 +1,8 @@
 /* assets/style.css 에 추가해 보세요 */
 @font-face {
   font-family: 'Stretch Pro';
-  src: url('./fonts/StretchPro.otf') format('opentype')
-  font-weight: normal;
+  src: url('./fonts/StretchPro.woff2') format('woff2'),
+     url('./fonts/StretchPro.otf') format('opentype');
   font-style: normal;
 }
 
