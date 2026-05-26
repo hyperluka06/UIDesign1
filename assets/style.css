@@ -22,11 +22,13 @@ body {
 }
 
 ul {
+  font-family: Stretch Pro;
   list-style: none;
   padding: 0;
 }
 
 li {
+  font-family: Stretch Pro;
   margin: 10px 0;
   font-size: 0.8rem;
 }
