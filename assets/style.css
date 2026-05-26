@@ -1,7 +1,7 @@
 /* assets/style.css 에 추가해 보세요 */
 @font-face {
   font-family: 'Stretch Pro';
-  src: url('./fonts/StretchPro.otf') format('otf')
+  src: url('StretchPro.otf') format('otf')
   font-weight: normal;
   font-style: normal;
 }
@@ -33,9 +33,6 @@ li {
 
 a {
   color: #ffffff;
-}
-
-a {
   transition: all 0.5s ease-out; /* 부드러운 변화를 위해 필수 */
   cursor: pointer;
 }
@@ -46,17 +43,9 @@ a:hover {
 }
 
 h1 {
+  font-family: Stretch Pro;
 	font-weight: 850;
 	font-size: 2.2rem;
-}
-
-h3 {
-  font-family: 'Stretch Pro';
-  font-size: 0.9rem;
-  color: #C0FF11
-}
-
-h1 {
   transition: all 0.5s ease-out; /* 부드러운 변화를 위해 필수 */
   cursor: pointer;
 }
@@ -64,4 +53,10 @@ h1 {
 h1:hover {
   letter-spacing: 10px; /* 자간이 넓어짐 */
   color: #266BFF;      /* 마젠타 핑크로 변경 */
+}
+
+h3 {
+  font-family: Stretch Pro;
+  font-size: 0.9rem;
+  color: #C0FF11
 }
