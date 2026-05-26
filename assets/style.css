@@ -1,4 +1,8 @@
 /* assets/style.css 에 추가해 보세요 */
+@font-face {
+  font-family: "Stretch Pro";
+  src: url("StretchPro.otf");
+}
 body {
   background-color: #000000;
   color: #ffffff;
