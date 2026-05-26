@@ -1,8 +1,11 @@
 /* assets/style.css 에 추가해 보세요 */
 @font-face {
-  font-family: "Stretch Pro";
-  src: url("/Users/lunakwon/Downloads/2026-1/UI디자인프로그래밍/websites/UIDesign1/assets/StretchPro.otf");
+  font-family: 'Stretch Pro';
+  src: url('./fonts/StretchPro.otf') format('otf')
+  font-weight: normal;
+  font-style: normal;
 }
+
 body {
   background-color: #000000;
   color: #ffffff;
