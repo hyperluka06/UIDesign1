@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find in Gen#</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* --------------------------------------------------
+           [1] 와이드 뼈대 구조 동기화 (헤더 양 끝 여백 1:1 일치)
+        -------------------------------------------------- */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            height: auto !important; 
+            min-height: 100vh;
+            overflow-y: auto !important; 
+            background-color: #000;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 98%;          /* style.css 및 shared와 동일하게 화면의 98% 사용 */
+            max-width: none !important; /* 헤더 양 끝 메뉴바 널찍하게 밀어붙이기 */
+            height: auto !important; 
+            min-height: 95vh;        
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            overflow: visible !important; 
+            box-sizing: border-box;
+            padding-top: 2.5vh; 
+        }
+
+        /* --------------------------------------------------
+           [2] 🔍 중앙 검색창 섹션 디자인
+        -------------------------------------------------- */
+        .find-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+            padding: 60px 0 100px 0;
+            box-sizing: border-box;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* 검색 결과가 나왔을 때 컨텐츠 레이아웃 정렬 변경용 클래스 */
+        .find-content.has-results {
+            justify-content: flex-start;
+            padding-top: 20px;
+        }
+
+        .find-title {
+            font-size: 55px; 
+            font-weight: 800;
+            letter-spacing: -2px;
+            text-align: center;
+            cursor: default;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .title-find { color: #C0FF11; }
+        .title-in { color: #266BFF; }
+        .title-gen { color: #FF3DF2; }
+
+        /* 힙한 미니멀 검색 바 */
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 650px; /* 안정적인 검색창 너비 */
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 18px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #0d0d0d;
+            border: 1px solid #222;
+            border-radius: 40px; /* 동글동글하고 트렌디한 인풋창 */
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            letter-spacing: -0.5px;
+            transition: all 0.3s ease;
+        }
+
+        /* 검색창 포커스 및 호버 시 테두리 연출 */
+        .search-bar:hidden-focus,
+        .search-bar:focus {
+            border-color: #fff;
+            background-color: #111;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+        }
+
+        /* 검색창 내부 오른쪽에 위치할 화살표 엔터 버튼 */
+        .search-submit-btn {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #555;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .search-bar:focus + .search-submit-btn,
+        .search-submit-btn:hover {
+            color: #fff;
+            transform: translateY(-50%) translateX(3px);
+        }
+
+        /* 추천 태그 가이드 */
+        .suggested-tags {
+            font-size: 14px;
+            font-weight: 700;
+            color: #444;
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .suggested-tags span {
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .suggested-tags span:hover {
+            color: #C0FF11; /* 호버 시 라임 컬러 포인트 */
+            text-decoration: underline;
+        }
+
+        /* --------------------------------------------------
+           [3] 🖼️ 검색 결과 포스터 그리드 (기본 숨김 처리)
+        -------------------------------------------------- */
+        .results-section {
+            width: 100%;
+            margin-top: 50px;
+            display: none; /* 📌 처음 진입 시에는 숨겨두고 검색 후 오픈 */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        /* 결과가 노출될 때 붙여줄 액티브 클래스 */
+        .results-section.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* shared 페이지와 동일한 5열 배열 */
+            gap: 24px; 
+            width: 100%;
+        }
+
+        .poster-card {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 18px; 
+            overflow: hidden;
+            background-color: #0d0d0d;
+            border: 1px solid #1a1a1a; 
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .poster-card img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1.414; 
+            object-fit: cover;
+            display: block;
+            border-radius: 18px;
+        }
+
+        .poster-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.12);
+            border-color: #333;
+        }
+
+        /* --------------------------------------------------
+           [4] 📱 반응형 분기점
+        -------------------------------------------------- */
+        @media (max-width: 1100px) {
+            .results-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 800px) {
+            .results-grid { grid-template-columns: repeat(3, 1fr); }
+            .find-title { font-size: 40px; }
+            .search-wrapper { max-width: 90%; }
+        }
+        @media (max-width: 550px) {
+            .results-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .find-title { font-size: 32px; }
+            .suggested-tags { display: none; } /* 모바일에선 추천태그 생략 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <ul>
+                <a href="find.html"><li class="tab">Find in Gen#</li></a>
+                <a href="shared.html"><li class="tab">Shared Project</li></a>
+                <a href="personal.html"><li class="tab">Personal Project</li></a>
+            </ul>
+            <a href="index.html"><div class="tab">HOME</div></a>
+        </header>
+
+        <div class="find-content" id="find-container">
+            <h1 class="find-title">
+                <span class="title-find">Find</span> 
+                <span class="title-in">in</span> 
+                <span class="title-gen">Gen#</span>
+            </h1>
+
+            <div class="search-wrapper">
+                <input type="text" class="search-bar" id="search-input" placeholder="search design keywords... (e.g., red, grainy)">
+                <button class="search-submit-btn" id="search-submit">&rarr;</button>
+            </div>
+
+            <div class="suggested-tags">
+                tags : 
+                <span onclick="quickSearch('red')">#red</span>
+                <span onclick="quickSearch('grainy')">#grainy</span>
+                <span onclick="quickSearch('energy')">#energy</span>
+                <span onclick="quickSearch('circle')">#circle</span>
+            </div>
+
+            <div class="results-section" id="results-section">
+                <div class="results-grid">
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=500" alt="Result 1"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500" alt="Result 2"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500" alt="Result 3"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=500" alt="Result 4"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=500" alt="Result 5"></div>
+                    
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=500" alt="Result 6"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=500" alt="Result 7"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=500" alt="Result 8"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1618545802167-7815b801532f?w=500" alt="Result 9"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1633513473180-21f42296d910?w=500" alt="Result 10"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="sub-caption">where you can enhance creativity with posters.</p>
+        </footer>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const searchSubmit = document.getElementById('search-submit');
+        const findContainer = document.getElementById('find-container');
+        const resultsSection = document.getElementById('results-section');
+
+        // 핵심 검색 실행 함수
+        function executeSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return; // 빈 값은 패스
+
+            // 1. 중앙 정렬되어 있던 컨테이너 스타일을 상단 정렬(.has-results)로 변경
+            findContainer.classList.add('has-results');
+            
+            // 2. 검색 결과 그리드 구역을 부드럽게 연출하여 노출
+            resultsSection.classList.add('show');
+            
+            // 3. 결과 창이 뜨자마자 포스터 리스트 쪽으로 자연스럽게 화면을 살짝 내려줌
+            setTimeout(() => {
+                resultsSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        }
+
+        // 엔터키 입력 이벤트 처리
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') executeSearch();
+        });
+
+        // 화살표 버튼 클릭 이벤트 처리
+        searchSubmit.addEventListener('click', executeSearch);
+
+        // 하단 추천 태그 클릭 시 즉시 검색창에 값을 채우고 트리거해주는 편리한 함수
+        // 핵심 검색 실행 함수
+        function executeSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return; // 빈 값은 패스
+
+            // 1. 중앙 정렬되어 있던 컨테이너 스타일을 상단 정렬(.has-results)로 변경
+            findContainer.classList.add('has-results');
+            
+            // 2. 검색 결과 그리드 구역을 부드럽게 연출하여 노출
+            resultsSection.classList.add('show');
+            
+            // 📌 자동 스크롤(scrollIntoView) 로직을 제거하여 화면이 튀지 않고 그 자리에 고정됩니다.
+        }
+    </script>
+</body>
+</html>

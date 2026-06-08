@@ -1,0 +1,173 @@
+/* MY 페이지 전용 추가 스타일 */
+.my-wrapper {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.my-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 30px;
+    letter-spacing: -1px;
+}
+
+/* 폼 스타일 (로그인 전) */
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: #aaa;
+    text-transform: uppercase;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    background-color: #000;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #C0FF11;
+    outline: none;
+}
+
+/* 📍 로그인 창용 동그라미 업로드 버튼 스타일 (이름 위 배치) */
+.upload-circle-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.upload-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background-color: #000;
+    border: 2px dashed #444;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.upload-circle:hover {
+    border-color: #C0FF11;
+    background-color: #161616;
+}
+
+.upload-circle span.icon {
+    font-size: 28px;
+    margin-bottom: 2px;
+}
+
+.upload-circle span.text {
+    font-size: 11px;
+    font-weight: 800;
+    color: #666;
+}
+
+.upload-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 버튼 기본 디자인 */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #fff;
+    color: #000;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #C0FF11;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #666;
+    border: 1px solid #333;
+}
+
+.btn-secondary:hover {
+    color: #FF3DF2;
+    border-color: #FF3DF2;
+}
+
+/* 프로필 화면 스타일 (로그인 후) */
+.profile-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-img-area {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background-color: #000;
+    border: 1px solid #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.profile-img-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.profile-job {
+    font-size: 14px;
+    color: #266BFF; /* Gen# 테마 블루 */
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+/* 숨김 처리용 클래스 */
+.hidden {
+    display: none !important;
+}

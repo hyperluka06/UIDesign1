@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MY - Gen#</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="my.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <ul>
+                <a href="find.html"><li class="tab">Find in Gen#</li></a>
+                <a href="shared.html"><li class="tab">Shared Project</li></a>
+                <a href="personal.html"><li class="tab">Personal Project</li></a>
+            </ul>
+            <a href="index.html"><div class="tab">HOME</div></a>
+        </header>
+
+        <div class="my-wrapper" id="login-section">
+            <h2 class="my-title">Join Gen#</h2>
+            
+            <form id="login-form">
+                <div class="upload-circle-wrapper">
+                    <div class="upload-circle" id="drop-zone" onclick="document.getElementById('user-file').click()">
+                        <div id="upload-preview" style="display: contents;">
+                            <span class="icon">📷</span>
+                            <span class="text">UPLOAD</span>
+                        </div>
+                    </div>
+                    <input type="file" id="user-file" accept="image/*" style="display: none;">
+                </div>
+
+                <div class="input-group">
+                    <label>Name</label>
+                    <input type="text" id="user-name" placeholder="Enter your name" required>
+                </div>
+                <div class="input-group">
+                    <label>Job / Role</label>
+                    <input type="text" id="user-job" placeholder="e.g. Graphic Designer" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Sign In</button>
+            </form>
+        </div>
+
+        <div class="my-wrapper hidden" id="profile-section">
+            <div class="profile-card">
+                <div class="profile-img-area" id="view-img-area">
+                    <span style="color: #444; font-size: 32px;">👤</span>
+                </div>
+                <h3 class="profile-name" id="view-name">UserName</h3>
+                <p class="profile-job" id="view-job">Designer</p>
+                
+                <button class="btn btn-secondary" id="logout-btn">Log Out</button>
+            </div>
+        </div>
+
+        <footer>
+            <p class="sub-caption">where you can enhance creativity with posters.</p>
+        </footer>
+    </div>
+
+    <script>
+        const loginSection = document.getElementById('login-section');
+        const profileSection = document.getElementById('profile-section');
+        const loginForm = document.getElementById('login-form');
+        
+        const fileInput = document.getElementById('user-file');
+        const uploadPreview = document.getElementById('upload-preview');
+        const userNameInput = document.getElementById('user-name');
+        const userJobInput = document.getElementById('user-job');
+
+        const viewName = document.getElementById('view-name');
+        const viewJob = document.getElementById('view-job');
+        const viewImgArea = document.getElementById('view-img-area');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        let uploadedImageBase64 = "";
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedImageBase64 = e.target.result;
+                    uploadPreview.innerHTML = `<img src="${uploadedImageBase64}" alt="Preview">`;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function checkLoginStatus() {
+            const savedName = localStorage.getItem('gen_name');
+            const savedJob = localStorage.getItem('gen_job');
+            const savedImg = localStorage.getItem('gen_img');
+
+            if (savedName && savedJob) {
+                loginSection.classList.add('hidden');
+                profileSection.classList.remove('hidden');
+
+                viewName.textContent = savedName;
+                viewJob.textContent = savedJob;
+
+                if (savedImg) {
+                    viewImgArea.innerHTML = `<img src="${savedImg}" alt="Profile">`;
+                } else {
+                    viewImgArea.innerHTML = `<span style="color: #444; font-size: 32px;">👤</span>`;
+                }
+            } else {
+                loginSection.classList.remove('hidden');
+                profileSection.classList.add('hidden');
+                uploadPreview.innerHTML = `<span class="icon">📷</span><span class="text">UPLOAD</span>`;
+                uploadedImageBase64 = "";
+            }
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            localStorage.setItem('gen_name', userNameInput.value);
+            localStorage.setItem('gen_job', userJobInput.value);
+            if (uploadedImageBase64) {
+                localStorage.setItem('gen_img', uploadedImageBase64);
+            }
+
+            checkLoginStatus();
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('gen_name');
+            localStorage.removeItem('gen_job');
+            localStorage.removeItem('gen_img');
+
+            loginForm.reset();
+            checkLoginStatus();
+        });
+
+        checkLoginStatus();
+    </script>
+</body>
+</html>

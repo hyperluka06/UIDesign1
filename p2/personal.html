@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Project - Gen#</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* --------------------------------------------------
+           [1] 공통 및 인트로 화면 스타일
+        -------------------------------------------------- */
+        .intro-content {
+            text-align: center;
+            margin: auto; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px; 
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .intro-title {
+            font-size: 52px;
+            font-weight: 900; 
+            letter-spacing: -2.5px;
+            line-height: 1.2;
+            cursor: default; 
+        }
+
+        .intro-title span {
+            display: inline-block; 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        .word-lets { color: #C0FF11; }
+        .word-lets:hover { transform: scale(1.12) rotate(-4deg); text-shadow: 0 0 15px rgba(192, 255, 17, 0.4); }
+        .word-make { color: #FF3DF2; }
+        .word-make:hover { animation: bounceText 0.5s ease infinite alternate; text-shadow: 0 0 15px rgba(255, 61, 242, 0.4); }
+        .word-posters { color: #266BFF; }
+        .word-posters:hover { transform: scale(1.15) rotate(5deg); text-shadow: 0 0 20px rgba(38, 107, 255, 0.5); }
+
+        @keyframes bounceText {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .begin-btn, .again-btn {
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff;
+            border-radius: 12px; 
+            padding: 10px 36px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: lowercase; 
+            transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .begin-btn:hover, .again-btn:hover {
+            background-color: #fff;
+            color: #000;
+            padding: 10px 52px; 
+        }
+
+        /* --------------------------------------------------
+           [2] 💥 초거대 로딩 텍스트 애니메이션
+        -------------------------------------------------- */
+        .loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            overflow: hidden;
+        }
+
+        .huge-loading-text {
+            font-size: 90px;
+            font-weight: 900;
+            color: #C0FF11; 
+            white-space: nowrap;
+            letter-spacing: -4px;
+            transform: translateX(100%); 
+        }
+
+        .loading-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .loading-screen.active .huge-loading-text {
+            animation: slideThrough 2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+        }
+
+        @keyframes slideThrough {
+            0% { transform: translateX(100%); }
+            45% { transform: translateX(0%); } 
+            55% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); } 
+        }
+
+        /* --------------------------------------------------
+           [3] 📦 결과 화면 스타일 (항상 고정된 2x2 그리드)
+        -------------------------------------------------- */
+        .result-content {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            width: 100%;
+            max-width: 700px; /* 2x2 구조에 맞는 안정적인 최대 너비 */
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* 📌 2x2 정렬을 강제하는 CSS Grid 설정 */
+        .boxes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 무조건 가로 2개 배분 */
+            gap: 20px; /* 상자 사이 여백 */
+            width: 100%;
+        }
+
+        /* 개별 카드 뼈대 */
+        .keyword-card {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* 텍스트 가이드 상자 */
+        .square-box {
+            width: 100%;
+            min-height: 120px; /* 늘어나는 유연성은 유지하되 컴팩트한 기본 높이 */
+            padding: 20px 16px; /* 텍스트 가독성을 위한 내부 여백 조절 */
+            background-color: #111;
+            border: 0.75px solid #fff;
+            border-radius: 16px; 
+            box-sizing: border-box;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            
+            /* 📌 텍스트 크기 및 자간 자잘하게 축소 */
+            font-size: 14px; 
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.45;
+            word-break: keep-all; 
+            
+            transition: all 0.3s ease;
+        }
+
+        /* 호버 이펙트 */
+        .keyword-card:hover .square-box {
+            border-color: #C0FF11;
+            background-color: #161616;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(38, 107, 255, 0.15);
+            color: #fff;
+        }
+
+        /* 다시하기 버튼 여백 조정 */
+        .again-btn {
+            margin-top: 12px;
+            border-color: #666;
+            color: #aaa;
+        }
+        .again-btn:hover {
+            border-color: #FF3DF2;
+            background-color: transparent;
+            color: #FF3DF2;
+        }
+
+        /* 상태 제어용 숨김 클래스 */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <ul>
+                <a href="find.html"><li class="tab">Find in Gen#</li></a>
+                <a href="shared.html"><li class="tab">Shared Project</li></a>
+                <a href="personal.html"><li class="tab">Personal Project</li></a>
+            </ul>
+            <a href="index.html"><div class="tab">HOME</div></a>
+        </header>
+
+        <div class="intro-content" id="intro-view">
+            <h1 class="intro-title">
+                <span class="word-lets">Let's</span> 
+                <span class="word-make">make some</span> 
+                <span class="word-posters">posters!</span>
+            </h1>
+            <button class="begin-btn" id="start-btn">begin &rarr;</button>
+        </div>
+
+        <div class="result-content hidden" id="result-view">
+            <div class="boxes-grid">
+                <div class="keyword-card">
+                    <div class="square-box" id="kw-1">Loading...</div>
+                </div>
+                <div class="keyword-card">
+                    <div class="square-box" id="kw-2">Loading...</div>
+                </div>
+                <div class="keyword-card">
+                    <div class="square-box" id="kw-3">Loading...</div>
+                </div>
+                <div class="keyword-card">
+                    <div class="square-box" id="kw-4">Loading...</div>
+                </div>
+            </div>
+            
+            <button class="again-btn" id="again-btn">generate again &rarr;</button>
+        </div>
+
+        <footer>
+            <p class="sub-caption">where you can enhance creativity with posters.</p>
+        </footer>
+    </div>
+
+    <div class="loading-screen" id="loading-overlay">
+        <div class="huge-loading-text">generating keyword...</div>
+    </div>
+
+    <script>
+        // 상세 디자인 조건 텍스트 풀
+        const keywordsPool = [
+            "Heavy Grain Texture with High-Contrast Cyberpunk Neon",
+            "Minimalist Bauhaus Layout using Only Primary Colors",
+            "Y2K Nostalgia: Metallic Liquid Chrome & Glitch Art",
+            "Swiss Typography with Strict Grid-Based Alignment",
+            "Brutalist Design with Raw Concrete Backgrounds & Large Serif",
+            "Duotone Screen-print Effect with Bold Outlined Graphics",
+            "Acid Graphics involving Abstract 3D Shapes & Tribal Vectors",
+            "Vintage Retro Pop-Art with Halftone Dot Patterns",
+            "Futuristic Monochromatic Layout using Geometric Wireframes",
+            "Maximalist Collage with Mixed Media Textures and Paper Rips",
+            "Eco-Friendly Aesthetic with Organic Textures and Earthy Tones",
+            "Dark Mode Luxury: Matte Black Background with Gold Accents",
+            "Deconstructive Typography with Overlapping Broken Text",
+            "90s Japanese City Pop Vibes with Soft Pastel Gradients",
+            "Kinetic Typography creating an Illusion of Motion",
+            "Abstract Expressionism with Virtual Paint Splatters"
+        ];
+
+        const startBtn = document.getElementById('start-btn');
+        const againBtn = document.getElementById('again-btn');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        
+        const introView = document.getElementById('intro-view');
+        const resultView = document.getElementById('result-view');
+
+        function generateRandomKeywords() {
+            const shuffled = [...keywordsPool].sort(() => 0.5 - Math.random());
+            
+            document.getElementById('kw-1').textContent = shuffled[0];
+            document.getElementById('kw-2').textContent = shuffled[1];
+            document.getElementById('kw-3').textContent = shuffled[2];
+            document.getElementById('kw-4').textContent = shuffled[3];
+        }
+
+        function triggerGenerationSequence() {
+            loadingOverlay.classList.add('active');
+
+            setTimeout(() => {
+                introView.classList.add('hidden');    
+                resultView.classList.remove('hidden'); 
+                generateRandomKeywords();              
+            }, 1200);
+
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+            }, 2000);
+        }
+
+        startBtn.addEventListener('click', triggerGenerationSequence);
+        againBtn.addEventListener('click', triggerGenerationSequence);
+    </script>
+</body>
+</html>

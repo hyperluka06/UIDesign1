@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Gen#</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="space">
+        <header>
+            <ul>
+                <a href="find.html"><li class="tab">Find in Gen#</li></a>
+                <a href="shared.html"><li class="tab">Shared Project</li></a>
+                <a href="personal.html"><li class="tab">Personal Project</li></a>
+            </ul>
+            <a href="my.html"><div class="tab">MY</div></a>
+        </header>
+
+        <div class="main-content">
+            <h1>Welcome to <span class="gen-g">G</span><span class="gen-e">e</span><span class="gen-n">n</span>#</h1>
+        </div>
+
+        <div class="footer-text" id="bouncing-text">About Gen#</div>
+
+        <footer>
+            <p class="sub-caption">where you can enhance creativity with posters.</p>
+        </footer>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-modal">&times;</button>
+            <h2 class="modal-title">About <span class="gen-g">G</span><span class="gen-e">e</span><span class="gen-n">n</span>#</h2>
+            <div class="modal-body">
+                <p>Gen# is a platform that encourages users to think creatively and helps them practice putting those ideas into action.</p>
+                <br>
+                <p>Rather than creating something from nothing, it guides designers toward a clearer direction through intentional constraints, believing that these limitations can lead to entirely new forms of creative work.</p>
+                <br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const text = document.getElementById('bouncing-text');
+        const space = document.getElementById('space');
+        const modal = document.getElementById('modal');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        let posX = 100;
+        let posY = 200;
+        let speedX = 2;
+        let speedY = 1.8;
+        let isHovered = false; 
+        let isModalOpen = false; 
+
+        const colors = ['#C0FF11', '#FF3DF2', '#266BFF'];
+        let lastColorIndex = -1;
+
+        function changeTextColor() {
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * colors.length);
+            } while (randomIndex === lastColorIndex);
+            
+            text.style.color = colors[randomIndex];
+            lastColorIndex = randomIndex;
+        }
+
+        function moveText() {
+            if (isHovered || isModalOpen) {
+                requestAnimationFrame(moveText);
+                return;
+            }
+
+            const spaceRect = space.getBoundingClientRect();
+            const textRect = text.getBoundingClientRect();
+
+            const maxX = spaceRect.width - textRect.width - 4;
+            const maxY = spaceRect.height - textRect.height - 4;
+
+            posX += speedX;
+            posY += speedY;
+
+            let hitWall = false;
+
+            if (posX <= 0) { posX = 0; speedX = -speedX; hitWall = true; }
+            else if (posX >= maxX) { posX = maxX; speedX = -speedX; hitWall = true; }
+
+            if (posY <= 0) { posY = 0; speedY = -speedY; hitWall = true; }
+            else if (posY >= maxY) { posY = maxY; speedY = -speedY; hitWall = true; }
+
+            if (hitWall) { changeTextColor(); }
+
+            text.style.left = posX + 'px';
+            text.style.top = posY + 'px';
+
+            requestAnimationFrame(moveText);
+        }
+
+        text.addEventListener('mouseenter', () => { isHovered = true; });
+        text.addEventListener('mouseleave', () => { isHovered = false; });
+
+        text.addEventListener('click', () => {
+            isModalOpen = true;
+            modal.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            isModalOpen = false;
+            modal.classList.remove('active');
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                isModalOpen = false;
+                modal.classList.remove('active');
+            }
+        });
+
+        window.addEventListener('load', moveText);
+
+        window.addEventListener('resize', () => {
+            const spaceRect = space.getBoundingClientRect();
+            const textRect = text.getBoundingClientRect();
+            const maxX = spaceRect.width - textRect.width - 4;
+            const maxY = spaceRect.height - textRect.height - 4;
+            if (posX > maxX) posX = maxX - 10;
+            if (posY > maxY) posY = maxY - 10;
+            if (posX < 0) posX = 10;
+            if (posY < 0) posY = 10;
+        });
+    </script>
+</body>
+</html>

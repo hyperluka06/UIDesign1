@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Project - Gen#</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* --------------------------------------------------
+           [1] 전체 레이아웃 및 자연스러운 스크롤 설정 (헤더 여백 일치 버전)
+        -------------------------------------------------- */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; 
+            height: auto !important; 
+            min-height: 100vh;
+            overflow-y: auto !important; 
+        }
+
+        .container {
+            width: 98%;          /* style.css와 동일하게 화면의 98%를 사용 */
+            
+            /* 📌 중요: 기존에 걸려있던 max-width: 1300px를 해제합니다. */
+            /* 이 제한이 풀려야 헤더 메뉴바가 메인화면처럼 양 끝(98% 지점)까지 시원하게 펴집니다. */
+            max-width: none !important; 
+            
+            height: auto !important; 
+            min-height: 95vh;        
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            overflow: visible !important; 
+            box-sizing: border-box;
+            padding-top: 2.5vh; 
+        }
+
+        /* --------------------------------------------------
+           [2] 중간 콘텐츠 영역 (정확한 중앙 배치를 위한 세팅)
+        -------------------------------------------------- */
+        .shared-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            width: 100%;
+            padding: 40px 24px 80px 24px; /* 아래 포스터와의 부드러운 간격 확보 */
+            box-sizing: border-box;
+            flex-grow: 1; /* 빈 공간을 채워 정확히 균등 분할되도록 설정 */
+            justify-content: center;
+        }
+
+        .shared-title {
+            font-size: 55px; /* style.css h1 크기(55px)와 완벽 동기화 */
+            font-weight: 800;
+            letter-spacing: -2px;
+            text-align: center;
+            cursor: default;
+            margin-bottom: 20px;
+        }
+
+        .title-this { color: #C0FF11; }
+        .title-keywords { color: #FF3DF2; }
+        .title-are { color: #266BFF; }
+        .title-hash { color: #fff; }
+
+        /* 📦 이번 주 키워드 상자 (2x2 그리드) */
+        .keywords-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            width: 100%;
+            max-width: 800px; 
+        }
+
+        .keyword-box {
+            width: 100%;
+            padding: 16px 20px; 
+            background-color: #0b0b0b;
+            border: 1px solid #222;
+            border-radius: 30px; 
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 14px; 
+            font-weight: 800;
+            color: #fff;
+            text-transform: lowercase;
+            letter-spacing: -0.3px;
+            transition: all 0.3s ease;
+        }
+
+        .keyword-box:hover {
+            border-color: #555;
+            background-color: #111;
+        }
+
+        /* 🔗 업로드 버튼 */
+        .upload-link {
+            font-size: 17px; 
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 12px;
+            position: relative;
+            padding-bottom: 3px;
+            cursor: pointer;
+        }
+
+        .upload-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px; 
+            bottom: 0;
+            left: 0;
+            background-color: #fff;
+            transition: transform 0.3s ease;
+            transform-origin: right;
+            transform: scaleX(1);
+        }
+
+        .upload-link:hover::after {
+            transform: scaleX(0);
+        }
+
+        /* --------------------------------------------------
+           [3] 🖼️ 유저 포스터 그리드 (스크롤 구간)
+        -------------------------------------------------- */
+        .posters-section {
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .posters-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 24px; 
+            width: 100%;
+        }
+
+        .poster-card {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            border-radius: 18px; 
+            overflow: hidden;
+            background-color: #0d0d0d;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.4s ease;
+            cursor: pointer;
+            box-sizing: border-box;
+            border: 1px solid #1a1a1a; 
+        }
+
+        .poster-card img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1.414; 
+            object-fit: cover;
+            display: block;
+            border-radius: 18px;
+        }
+
+        .poster-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.12);
+            border-color: #333;
+        }
+
+        /* 모서리가 하얗게 빛나는 빈 슬롯 */
+        .poster-card.empty-slot {
+            border: 0.85px solid #fff; 
+            background-color: #050505; 
+            aspect-ratio: 1 / 1.414;   
+            border-radius: 18px;
+            cursor: default;           
+        }
+
+        .poster-card.empty-slot:hover {
+            transform: none;           
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+            border-color: #fff;
+        }
+
+        /* 업로드 직후 하이라이트 애니메이션 */
+        .just-uploaded {
+            animation: neonHighlight 2s ease-in-out;
+            border: 1px solid #FF3DF2 !important; 
+        }
+
+        @keyframes neonHighlight {
+            0% { transform: scale(0.95); box-shadow: 0 0 0px rgba(255, 61, 242, 0); }
+            50% { transform: scale(1.03); box-shadow: 0 0 20px rgba(255, 61, 242, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 0 0px rgba(255, 61, 242, 0); }
+        }
+
+        /* --------------------------------------------------
+           [4] 📱 반응형 분기점
+        -------------------------------------------------- */
+        @media (max-width: 1100px) {
+            .posters-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 800px) {
+            .posters-grid { grid-template-columns: repeat(3, 1fr); }
+            .shared-title { font-size: 40px; }
+            .keywords-grid { gap: 12px; }
+        }
+        @media (max-width: 550px) {
+            .keywords-grid { grid-template-columns: 1fr; }
+            .posters-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .shared-title { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <ul>
+                <a href="find.html"><li class="tab">Find in Gen#</li></a>
+                <a href="shared.html"><li class="tab">Shared Project</li></a>
+                <a href="personal.html"><li class="tab">Personal Project</li></a>
+            </ul>
+            <a href="index.html"><div class="tab">HOME</div></a>
+        </header>
+
+        <div class="shared-content">
+            <h1 class="shared-title">
+                <span class="title-this">This week's</span> 
+                <span class="title-keywords">keywords</span> 
+                <span class="title-are">are...</span><span class="title-hash">#</span>
+            </h1>
+
+            <div class="keywords-grid">
+                <div class="keyword-box">main colors be red and black</div>
+                <div class="keyword-box">use grainy textures</div>
+                <div class="keyword-box">express 'energy'</div>
+                <div class="keyword-box">add a big circle</div>
+            </div>
+
+            <a class="upload-link" id="upload-trigger">upload mine &rarr;</a>
+            <input type="file" id="poster-input" accept="image/*" style="display: none;">
+
+            <div class="posters-section">
+                <div class="posters-grid">
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=500" alt="Poster 1"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500" alt="Poster 2"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500" alt="Poster 3"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=500" alt="Poster 4"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=500" alt="Poster 5"></div>
+                    
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=500" alt="Poster 6"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1582201942988-13e60e4556ee?w=500" alt="Poster 7"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=500" alt="Poster 8"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1618545802167-7815b801532f?w=500" alt="Poster 9"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1633513473180-21f42296d910?w=500" alt="Poster 10"></div>
+
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1620121692029-d088224ddc74?w=500" alt="Poster 11"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1634614605917-f57077fb5823?w=500" alt="Poster 12"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1637416067365-2b5e7e8fe8fa?w=500" alt="Poster 13"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1621256608514-99b80e8dfb48?w=500" alt="Poster 14"></div>
+                    <div class="poster-card"><img src="https://images.unsplash.com/photo-1623910302251-14032c58a514?w=500" alt="Poster 15"></div>
+
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                    <div class="poster-card empty-slot"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="sub-caption">where you can enhance creativity with posters.</p>
+        </footer>
+    </div>
+
+    <script>
+        const uploadTrigger = document.getElementById('upload-trigger');
+        const posterInput = document.getElementById('poster-input');
+
+        uploadTrigger.addEventListener('click', () => posterInput.click());
+
+        posterInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const imageUrl = URL.createObjectURL(file);
+            const firstEmptySlot = document.querySelector('.poster-card.empty-slot');
+
+            if (!firstEmptySlot) {
+                alert("All slots are full! Generation session is closed.");
+                return;
+            }
+
+            firstEmptySlot.classList.remove('empty-slot');
+            firstEmptySlot.classList.add('just-uploaded');
+            
+            const newImg = document.createElement('img');
+            newImg.src = imageUrl;
+            newImg.alt = "My Uploaded Poster";
+            firstEmptySlot.appendChild(newImg);
+
+            setTimeout(() => {
+                firstEmptySlot.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 50);
+        });
+    </script>
+</body>
+</html>
