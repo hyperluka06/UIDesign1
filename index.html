@@ -73,6 +73,41 @@
     heroText.addEventListener("mouseleave", () => {
       document.body.classList.remove("photo-bg");
     });
+
+    document.addEventListener("click", (e) => {
+
+  const STAR_COUNT = 12;
+
+  for (let i = 0; i < STAR_COUNT; i++) {
+
+    const star = document.createElement("div");
+
+    star.className = "star-burst";
+    star.textContent = "★";
+
+    star.style.left = `${e.clientX}px`;
+    star.style.top = `${e.clientY}px`;
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 20 + Math.random() * 50;
+
+    star.style.setProperty(
+      "--dx",
+      `${Math.cos(angle) * distance}px`
+    );
+
+    star.style.setProperty(
+      "--dy",
+      `${Math.sin(angle) * distance}px`
+    );
+
+    document.body.appendChild(star);
+
+    setTimeout(() => {
+      star.remove();
+    }, 800);
+  }
+});
   </script>
 
 </body>

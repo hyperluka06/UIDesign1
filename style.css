@@ -191,3 +191,29 @@ body > * {
 .section-link:hover {
   opacity: 1;
 }
+
+.star-burst {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+
+  color: #f5f2e8; /* fill it up 텍스트 색으로 수정 */
+  font-size: 12px;
+
+  animation: sparkle 0.8s ease-out forwards;
+}
+
+@keyframes sparkle {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(
+      var(--dx),
+      var(--dy)
+    ) scale(1.5);
+  }
+}
