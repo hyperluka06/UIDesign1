@@ -1,0 +1,193 @@
+@font-face {
+  font-family: "Neue Haas Grotesk";
+  src: url("./neuehaasgrotdisp-75bold-trial.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg: #15f58d;
+  --text: #f5f5f5;
+  --headline: #a1ffd2;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --text: #15f58d;
+    --headline: #a1ffd2;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Neue Haas Grotesk", Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Hover Background Image */
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  background:
+    url("./IDID-I-did-it-Concept-Teasers-documents-1.jpeg")
+    center center / cover no-repeat;
+
+  opacity: 0;
+  transition: opacity 0.35s ease;
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.photo-bg::before {
+  opacity: 1;
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero */
+
+.hero {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 30vh;
+}
+
+.hero h1 {
+  font-size: clamp(5rem, 11vw, 11rem);
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+/* Sections */
+
+.section {
+  min-height: 10vh;
+
+  display: flex;
+  align-items: flex-start;
+
+  padding: 1rem 20px;
+}
+
+.headline {
+  position: relative;
+  display: inline-block;
+
+  font-size: clamp(5rem, 12vw, 12rem);
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+  font-weight: 700;
+
+  color: var(--headline);
+
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.headline:hover {
+  color: white;
+}
+
+.headline::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  bottom: -0.05em;
+
+  width: 100%;
+  height: 0.045em;
+
+  background: currentColor;
+}
+
+/* Scroll Animation */
+
+.fade {
+  opacity: 0;
+  transform: translateY(60px);
+
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s ease;
+}
+
+.fade.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Footer */
+
+.footer-note {
+  width: 100%;
+
+  margin-top: 35vh;
+  padding-bottom: 30px;
+
+  text-align: center;
+
+  font-size: 1rem;
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+  .hero {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .section {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .hero h1,
+  .headline {
+    letter-spacing: -0.08em;
+  }
+
+}
+
+.section-link {
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1.5px;
+}
+
+.section-link:hover {
+  opacity: 1;
+}

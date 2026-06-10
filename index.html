@@ -1,35 +1,79 @@
-  
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>Kwon Cho | UI Design Programming 1</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" type="text/css" href="assets/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+
+  <link rel="stylesheet" href="style.css">
 </head>
-  
+
 <body>
 
-  <!-- this is where my code is-->
-  <div id="grid">
-    <div id="left-column" class="scroll">  
+  <section class="hero">
+    <h1 class="fade">
+      fill it up, let it spark*
+    </h1>
+  </section>
 
-      <h1>@lk_lunakwon</h1> 
-      <h3>#Myself</h3>
-      <ul>
-        <li>I'm majoring 'Visual Design' at SNU.</li>
-        <li>I like designing, dancing, and listening to music.</li>
-        <li>My favorite website is <a href="https://www.instagram.com/">Instagram</a>.</li>
-      </ul>
-      <br>
-      <h3>#Archived</h3>
-      <ul>
-        <li><a href="ascii/exterior-KwonCho.html">ASCII Town</a></li>
-        <li><a href="codingfromlife/codingfromlife_index.html">CodingFromLife</a></li>
-        <li><a href="myshelf/codemyshelf_index.html">CodeMyShelf</a></li>
-      </ul>
+  <section class="section">
+    <h2 class="headline fade">about myself</h2>
+  </section>
 
-    </div>
-  </div>
+  <section class="section">
+    <h2 class="headline fade">
+      <a href="ascii/exterior-KwonCho.html" class="section-link">ascii town</a>
+    </h2>
+
+  </section>
+
+  <section class="section">
+    <h2 class="headline fade">
+      <a href="codingfromlife/codingfromlife_index.html" class="section-link">coding from life</a>
+    </h2>
+  </section>
+
+  <section class="section">
+    <h2 class="headline fade">
+      <a href="myshelf/codemyshelf_index.html" class="section-link">coding myself</a>
+    </h2>
+  </section>
+
+  <section class="section">
+    <h2 class="headline fade">
+      <a href="clock/index.html" class="section-link">clock</a></h2>
+  </section>
+
+  <footer class="footer-note">
+    This is a website for UI Design Programming Class.
+  </footer>
+
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    document
+      .querySelectorAll(".fade")
+      .forEach((el) => observer.observe(el));
+
+    const heroText = document.querySelector(".hero h1");
+
+    heroText.addEventListener("mouseenter", () => {
+      document.body.classList.add("photo-bg");
+    });
+
+    heroText.addEventListener("mouseleave", () => {
+      document.body.classList.remove("photo-bg");
+    });
+  </script>
+
 </body>
 </html>
