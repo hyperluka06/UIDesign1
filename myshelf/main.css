@@ -1,54 +1,229 @@
-
-* {
-	margin: 0px;
-	padding: 0px;
-	box-sizing: border-box;
+/* ------------------------------------
+   [필수] 외부 폰트 등록 (@font-face)
+--------------------------------------- */
+@font-face {
+    font-family: "Neue Haas Grotesk";
+    src: url("../neuehaasgrotdisp-75bold-trial.otf") format("opentype");
+    font-weight: 800;
 }
 
+/* 1. 전체 배경: 깔끔한 흰색 배경 */
 body {
-	display: flex;
-	padding: 20px;
-	justify-content: center;
-	align-items: center;
-	min-height: 100vh;
-  	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  	background: black;
+    background-color: #ffffff;
+    font-family: "Neue Haas Grotesk", sans-serif; /* 폰트 적용 및 백업 폰트 설정 */
+    padding: 50px 20px;
+    margin: 0;
+    color: #111111;
 }
 
+/* 제목 스타일 (팝업이 완전히 겹치도록 설정) */
 h1 {
-	position: fixed;
-	top: 20px;
-	left: 20px;
-	padding: 7px 20px;
-	background: white;
-	border-radius: 20px;
-	font-size: 18px;
+    text-align: center;
+    font-family: "Neue Haas Grotesk", sans-serif;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-top: 40px;
+    margin-bottom: 10px;
+    font-size: 50pt;
+    
+    position: relative;       /* ★ 팝업 상자가 겹쳐질 기준점 */
+    display: inline-block;    /* 글자 영역 크기만큼만 잡기 */
+    left: 50%;                /* 화면 중앙 정렬 */
+    transform: translateX(-50%);
 }
 
+/* h1 내부의 실제 글자 부분 */
+.title-text {
+    cursor: help;
+}
+
+/* [수정] 팝업 상자 기본 스타일 (제목을 정중앙에서 완전히 덮어씌우도록 위치 변경) */
+.popup-box {
+    position: absolute;
+    top: 50%;                 /* ★ 부모(h1)의 세로 중앙 */
+    left: 80%;                /* ★ 부모(h1)의 가로 중앙 */
+    /* 평소에는 살짝 작아진 상태(scale 0.95)로 투명하게 숨김 */
+    transform: translate(-50%, -50%) scale(0.95); 
+    
+    width: 200px;            /* 제목 글자를 넉넉히 가릴 수 있는 가로 크기 */
+    background-color: #15f58d;
+    color: #111111;
+    border: 2px solid #15f58d; /* 조금 더 선명하게 3px 두께의 연두색 테두리 */
+    padding: 18px;
+    
+    font-size: 9.5pt;         /* 설명 본문 글씨 크기 */
+    font-weight: 600;        
+    letter-spacing: 0;
+    line-height: 1.3;
+    text-align: center;        
+    
+    opacity: 0;              /* 평소엔 투명 */
+    visibility: hidden;      /* 평소엔 완전히 숨김 */
+    transition: all 0.25s ease-out; /* 조금 더 빠르게 반응하도록 수정 */
+    z-index: 100;            
+}
+
+/* 팝업 상자 안의 강조 글씨 */
+.popup-box strong {
+    color: #111111;
+    font-weight: 800;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+/* ★ 제목에 마우스를 올렸을 때(Hover) 제크기로 커지며 제목을 완전히 가림 */
+h1:hover .popup-box {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1); /* 중앙에 딱 맞춰 등판 */
+}
+
+/* 서브타이틀 스타일 (기존 유지) */
+.sub-title {
+    text-align: center;
+    font-family: "Neue Haas Grotesk", sans-serif;
+    font-weight: 800;
+    font-size: 16pt;
+    color: #15f58d;
+    margin-top: 0;
+    margin-bottom: 60px;
+    letter-spacing: -0.5px;
+    clear: both;             
+}
+
+/* 책장 전체 레이아웃 */
 #bookcase {
-	width: 1200px;
-	height: 2000px;
-	display: grid;
-	grid-template-columns: 1fr;
-	grid-template-rows: 1fr 1fr 1fr 1fr;
-	justify-content: space-evenly;
-	border: 20px solid grey;
-	background: #333;
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 60px;
 }
 
+/* 2. 선반 스타일: 요청하신 #15f58d 색상 적용 */
 .shelf {
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	align-items: bottom;
-	justify-content: space-evenly;
-	border-bottom: 20px solid lightgrey;
-	padding: 10px 10px 0px 0px;
+    background-color: #15f58d;
+    height: 3px; /* 선반 두께 3px로 수정하셨군요! 깔끔합니다. */
+    position: relative;
+    margin-top: 180px;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
 }
 
-img {
-	width: 140px;
-	height: auto;
-	display: block;
-	align-self: end;
+/* 3. 앨범 아이템 스타일 */
+.album {
+    width: 160px;
+    height: 160px;
+    background-color: #eeeeee;
+    position: absolute;
+    /* [수정] 선반 두께가 3px이 되었으므로, 
+       앨범이 선반 바로 위에 딱 붙도록 bottom 값을 3px로 수정했습니다. 
+    */
+    bottom: 3px; 
+    overflow: hidden; /* ★ 효과가 앨범의 정사각형 틀 밖으로 삐져나가지 않도록 커팅 */
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    /* [링크 스타일 초기화] 하이퍼링크 특유의 밑줄을 없애고 텍스트 본연의 색 유지 */
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 실제 앨범 커버 이미지 */
+.album img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.3s ease; /* ★ 블러 애니메이션 부드럽게 처리 */
+}
+
+/* 각 앨범의 좌우 위치 균등 배치 */
+.shelf .album:nth-child(1) { left: 5%; }
+.shelf .album:nth-child(2) { left: 28%; }
+.shelf .album:nth-child(3) { left: 51%; }
+.shelf .album:nth-child(4) { left: 74%; }
+
+/* ------------------------------------
+   [신규] 마우스 호버 시 인터랙션 효과 
+--------------------------------------- */
+
+/* 마우스를 올렸을 때 효과 (기존 위치/크기/그림자 유지) */
+.album:hover {
+    transform: translateY(-15px) scale(1.05);
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* 호버 시 원본 이미지 블러(Blur) 처리 */
+.album:hover img {
+    filter: blur(8px);
+}
+
+/* 호버 시 앨범 위에 은은하게 올라올 연두색 오버레이 레이어 */
+.album::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #15f58d;
+    opacity: 0; /* 평소엔 투명 */
+    transition: opacity 0.3s ease;
+}
+
+/* 호버 시 연두색 오버레이 투명도를 75%로 올림 */
+.album:hover::after {
+    opacity: 0.75;
+}
+
+/* 앨범 내부 정보 텍스트 레이어 상자 */
+.album-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10; /* 연두색 레이어보다 무조건 위에 뜨도록 설정 */
+    
+    /* 가로/세로 정중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+    text-align: center;
+    
+    /* 애니메이션 시작값: 평소엔 안 보이고 아래로 15px 내려가 있음 */
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.3s ease-out;
+}
+
+/* 호버 시 텍스트 상자가 선명해지며 위로 스르륵 올라옴 */
+.album:hover .album-info {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 노래 제목 스타일 */
+.album-title {
+    font-family: "Neue Haas Grotesk", sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: #111111;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+    word-break: keep-all; /* 단어가 도중에 안 끊기게 방지 */
+}
+
+/* 가수 이름 스타일 */
+.album-artist {
+    font-family: "Neue Haas Grotesk", sans-serif;
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: #444444;
+    margin: 0;
 }
