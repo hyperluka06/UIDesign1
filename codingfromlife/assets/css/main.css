@@ -1,93 +1,258 @@
+/* 기본 배경 설정 */
 body {
-	background: #cccccc;
-}
-
-#align {
-	display: flex;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f9;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: center;	
   height: 100vh;
+  overflow: hidden;
 }
 
-#stage {
-	width: 900px;
-	height: 556px;
-	margin: auto;
-	background: white;
-	position: relative;
+/* 전체 컨테이너 (귀가 잘리지 않도록 넉넉한 공간 확보) */
+.espeon-container {
+  position: relative;
+  width: 550px;
+  height: 450px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }
 
-#triangle {
-	width: 0;
-	height: 0;
-	border-left: 75px solid transparent;
-	border-right: 75px solid transparent;
-	border-bottom: 150px solid yellow;
-	position: absolute;
-	top: 203px;
-	left: 60px;
+#eye-toggle {
+  display: none;
 }
 
-#square {
-	width: 150px;
-	height: 150px;
-	background: red;
-	top: 203px;
-	left: 270px;
-	position: absolute;
-
-	/* uncomment to add keyframe animation */
-	/* animation: spin 2s infinite; */
-
+/* 에브이 전체 요소 래퍼 */
+.espeon-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: block;
 }
 
-#circle {
-	width: 150px;
-	height: 150px;
-	background: blue;
-	border-radius: 150px;
-	top: 203px;
-	left: 480px;
-	position: absolute;
+/* ===================================================
+   ★ 큰 귀 구현 (외곽 및 내부)
+   =================================================== */
+
+/* 귀 공통 설정 (기본 크기와 테두리 정리) */
+.ear {
+  position: absolute;
+  top: 25px;     /* 머리 위로 귀가 쫑긋 솟아오르도록 위치 조정 */
+  width: 80px;     /* 에브이의 날렵하고 슬림한 귀 폭 */
+  height: 250px;   /* 길쭉한 귀를 위해 높이 증가 */
+  background-color: #ecd4e2; /* 에브이 피부색 */
+  border: 4px solid #1a2229;
+  z-index: 1;
 }
 
-#clip {
-	width: 150px;
-	height: 150px;
-	background: green;
-	clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-	top: 203px;
-	left: 690px;
-	position: absolute;
-
-	/* uncomment for css transitions */
-	/* transition: all 400ms ease; */
+/* 왼쪽 귀 */
+.ear.left {
+  left: 150px;    /* 두상 크기에 맞춰 좌우 위치를 미세 조정하세요 */
+  /* 왼쪽 위 끝을 뾰족하게, 아래쪽은 자연스럽게 이어지도록 조절 */
+  border-radius: 100% 10% 10% 40% / 100% 10% 10% 20%;
+  transform: rotate(-40deg); /* 조금 더 시원하게 바깥으로 뻗도록 각도 수정 */
+  transform-origin: bottom center;
 }
 
-/* animations */
-
-/*
-#clip:hover {
-	transform: rotate(1200deg);
+/* 오른쪽 귀 */
+.ear.right {
+  right: 150px;
+  /* 오른쪽 위 끝을 뾰족하게 */
+  border-radius: 10% 100% 40% 10% / 10% 100% 20% 10%;
+  transform: rotate(40deg);
+  transform-origin: bottom center;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* 귀 내부 (어두운 청록색/진회색 부분) */
+.inner-ear {
+  position: absolute;
+  width: 55%;      /* 겉 귀보다 살짝 슬림하게 */
+  height: 85%;     /* 귀 안쪽 깊숙히 채워지도록 */
+  background-color: #23393d; 
+  border: 3px solid #1a2229;
+  bottom: 0;       /* 아래쪽에 딱 붙임 */
+}
+
+/* 왼쪽 귀 내부 */
+.ear.left .inner-ear {
+  left: 4px;      /* 귀의 바깥쪽 라인에 맞추기 위해 우측 정렬 */
+  border-radius: 100% 10% 10% 40% / 100% 10% 10% 20%;
+}
+
+/* 오른쪽 귀 내부 */
+.ear.right .inner-ear {
+  right: 4px;       /* 귀의 바깥쪽 라인에 맞추기 위해 좌측 정렬 */
+  border-radius: 10% 100% 40% 10% / 10% 100% 20% 10%;
 }
 
 
-@keyframes move {
-  from {
-    transform: translateX(0px);
-  }
-  to {
-    transform: translateX(100px);
-  }
+/* ===================================================
+   얼굴 본체 및 이목구비 (패치 제거 및 z-index 정리)
+   =================================================== */
+.espeon-face {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 210px;
+  background-color: #ecd4e2;
+  border: 4px solid #1a2229;
+  border-radius: 50% 50% 45% 45% / 62% 62% 45% 45%;
+  z-index: 3; /* 눈, 코, 보석을 담는 베이스 */
 }
 
-*/
+/* 이마 보석 */
+.gem {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  background-color: #d61c3c;
+  border: 4px solid #1a2229;
+  border-radius: 50%;
+}
+
+/* 눈 공통 (위치 정상화: top 120px로 복구) */
+.eye {
+  position: absolute;
+  top: 120px; 
+  width: 52px;
+  height: 42px;
+  background-color: #5d3875; 
+  border: 4px solid #1a2229;
+  transition: background-color 0.2s ease;
+}
+.eye.left {
+  left: 35px;
+  border-radius: 100% 30% 60% 40% / 70% 40% 60% 30%;
+  transform: rotate(70deg);
+}
+.eye.right {
+  right: 35px;
+  border-radius: 30% 100% 40% 60% / 40% 70% 30% 60%;
+  transform: rotate(-70deg);
+}
+
+/* 눈동자 */
+.pupil {
+  position: absolute;
+  top: 0px;
+  width: 22px;
+  height: 22px;
+  background-color: #ffffff;
+}
+.eye.left .pupil { right: 10px; border-radius: 50%; }
+.eye.right .pupil { left: 10px; border-radius: 50%; }
+
+/* 코 */
+.nose {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 6px;
+  background-color: #1a2229;
+  border-radius: 50%;
+}
+
+/* ===================================================
+   ★ 뺨 양옆 깃털 (하나의 윤곽선으로 자연스럽게 합치기)
+   =================================================== */
+.whisker {
+  position: absolute;
+  background-color: #ecd4e2;
+  /* 꼼수 대신 border를 각각 주어 얼굴 뒤에서 자연스럽게 뻗어나오게 만듭니다 */
+  border-top: 4px solid #1a2229;
+  border-bottom: 4px solid #1a2229;
+  z-index: 2; /* 얼굴(z-index: 3) 바로 뒤에 위치 */
+}
+
+/* 왼쪽 위 깃털 */
+.whisker.top-left {
+  left: -100px;      /* 얼굴 옆면에 자연스럽게 안착 */
+  bottom: 70px;
+  width: 110px;     /* 너무 튀어나오지 않게 크기 최적화 */
+  height: 45px;
+  border-left: 4px solid #1a2229; /* 바깥쪽 뾰족한 부분 테두리 */
+  border-radius: 0% 100% 20% 100% / 0% 100% 20% 100%;
+  transform: rotate(-25deg);
+}
+/* 왼쪽 아래 깃털 */
+.whisker.bottom-left {
+  left: -50px;
+  bottom: 55px;
+  width: 60px;
+  height: 20px;
+  border-left: 4px solid #1a2229;
+  border-radius: 0% 100% 20% 100% / 0% 100% 20% 100%;
+  transform: rotate(-45deg);
+}
+
+/* 오른쪽 위 깃털 */
+.whisker.top-right {
+  right: -100px;
+  bottom: 70px;
+  width: 110px;
+  height: 45px;
+  border-right: 4px solid #1a2229; /* 바깥쪽 뾰족한 부분 테두리 */
+  border-radius: 100% 0% 100% 20% / 100% 0% 100% 20%;
+  transform: rotate(25deg);
+}
+/* 오른쪽 아래 깃털 */
+.whisker.bottom-right {
+  right: -50px;
+  bottom: 55px;
+  width: 60px;
+  height: 20px;
+  border-right: 4px solid #1a2229;
+  border-radius: 100% 0% 100% 20% / 100% 0% 100% 20%;
+  transform: rotate(45deg);
+}
+
+/* ===================================================
+   ★ 클릭 토글 이벤트: 눈 색상 및 배경색 동시 변경
+   =================================================== */
+
+/* 기본 body 상태에도 부드러운 전환 효과 추가 */
+body {
+  transition: background-color 0.3s ease;
+}
+
+/* ===================================================
+   ★ 클릭 토글 이벤트: 다크모드 전환 및 눈 발광 + 진동 효과
+   =================================================== */
+
+/* 1. 배경색 변경 */
+body:has(#eye-toggle:checked) {
+  background-color: #15f58d; 
+}
+
+/* 2. 눈 색깔 변경 및 형광 발광 효과 (더 극적인 연출을 위해 추가) */
+#eye-toggle:checked + .espeon-wrapper .eye {
+  background-color: #15f58e;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 3. [핵심 추가] 토글되는 순간 에브이 전체가 미묘하게 지리릿- 떨리는 효과 */
+#eye-toggle:checked + .espeon-wrapper {
+  /* 0.2초 동안 'shaking' 애니메이션을 1번만 실행 */
+  animation: shaking 0.2s linear 1;
+}
+
+/* 4. 미묘한 진동을 만들어내는 애니메이션 키프레임 */
+@keyframes shaking {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  20%  { transform: translate(-2px, 1px) rotate(-0.5deg); }
+  40%  { transform: translate(1px, -1px) rotate(0.5deg); }
+  60%  { transform: translate(-1px, -1px) rotate(-0.2deg); }
+  80%  { transform: translate(2px, 1px) rotate(0.2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}n: background-color 0.3s ease; /* 배경이 부드럽게 바뀌도록 애니메이션 추가 */
+}

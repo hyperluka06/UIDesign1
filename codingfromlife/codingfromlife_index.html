@@ -1,21 +1,40 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ko">
 <head>
-	<title>CSS Still Life</title>
-	<meta charset="utf-8" />
-	<link rel="stylesheet" href="assets/css/main.css" type="text/css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>에브이 얼굴 만들기</title>
+  <link rel="stylesheet" href="assets/css/main.css">
 </head>
-
 <body>
-	<div id="align">
-    <div id="stage">
-    	<div id="square"></div>
-    	<div id="circle"></div>
-    	<div id="triangle"></div>
-    	<div id="clip"></div>
-    </div>
-	</div>
-</body>
 
+  <div class="espeon-container">
+    <input type="checkbox" id="eye-toggle">
+    
+    <label for="eye-toggle" class="espeon-wrapper">
+      <div class="ear left">
+        <div class="inner-ear"></div>
+      </div>
+      
+      <div class="ear right">
+        <div class="inner-ear"></div>
+      </div>
+
+      <div class="espeon-face">
+        <div class="gem"></div>
+        
+        <div class="eye left"><div class="pupil"></div></div>
+        <div class="eye right"><div class="pupil"></div></div>
+        
+        <div class="nose"></div>
+        
+        <div class="whisker top-left"></div>
+        <div class="whisker bottom-left"></div>
+        <div class="whisker top-right"></div>
+        <div class="whisker bottom-right"></div>
+      </div>
+    </label>
+  </div>
+
+</body>
 </html>
