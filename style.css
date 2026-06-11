@@ -174,11 +174,6 @@ body > * {
     padding-right: 12px;
   }
 
-  .hero h1,
-  .headline {
-    letter-spacing: -0.08em;
-  }
-
 }
 
 .section-link {

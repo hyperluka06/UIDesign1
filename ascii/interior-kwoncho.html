@@ -3,25 +3,55 @@
 <head>
   <title>Kwon's house interior</title>
   <style>
+    /* 첨부된 폰트 파일 등록 */
+    @font-face {
+      font-family: 'NeueHaasGrot';
+      src: url('../neuehaasgrotdisp-75bold-trial.otf') format('opentype'); /* 폰트 파일 경로 확인 */
+      font-weight: bold;
+      font-style: normal;
+    }
+
     /* 전체 배경 및 텍스트 기본 설정 */
     body {
       background-color: #000000;
+      /* 배경 이미지 설정 */
+      background-image: url('../IDID-I-did-it-Concept-Teasers-documents-1.jpeg'); /* 여기에 실제 이미지 경로를 입력하세요 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      
+      /* #15f58d 색상 레이어를 위에 덮기 위한 위치 설정 */
+      position: relative;
       color: #ffffff;
       margin: 0;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      justify-content: center; /* 집을 화면 세로 정중앙에 위치시킵니다 */
+      align-items: center;    /* 집을 화면 가로 정중앙에 위치시킵니다 */
       min-height: 100vh;
       font-family: 'Helvetica', sans-serif;
       overflow-x: hidden; /* 가로 스크롤 방지 */
+      z-index: 0;
+    }
+
+    /* 배경 위에 불투명하게 덮는 #15f58d 레이어 */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #15f58d;
+      opacity: 1; /* 불투명도 조절 (0.0 투명 ~ 1.0 완전 불투명). 원하는 느낌에 따라 조절하세요. */
+      z-index: -1; /* 콘텐츠(집, 링크) 뒤로 보내기 */
     }
 
     /* 아스키 아트 스타일 */
     pre {
       font-family: 'Courier New', Courier, monospace; /* 고정폭 폰트 필수 */
-      font-size: 0.8rem;
-      line-height: 1.2;
+      font-size: 0.75rem; /* 깨짐 방지를 위해 폰트 사이즈를 살짝 조정했습니다 */
+      line-height: 1.15;
       margin: 0;
       transition: all 0.4s ease;
     }
@@ -33,199 +63,105 @@
     }
 
     /* 마우스를 올렸을 때 방 안이 밝아지는 효과 */
-    a:hover pre {
-      color: #266BFF; 
+    .interior-link:hover pre {
+      color: #111111; 
     }
 
-    /* 하단 홈 링크 (필요 시 추가) */
+    /* 하단 홈 링크 스타일 수정 */
     .nav-link {
-      margin-top: 30px;
       color: #ffffff;
-      font-family: 'Stretch Pro';
-      transition: all 0.3s ease;
+      text-decoration: none;
+      font-family: 'NeueHaasGrot', sans-serif; /* 첨부해주신 폰트로 변경 */
+      font-size: 0.9rem;
+      font-weight: bold;
+      
+      /* 절대 위치를 사용하여 화면 바닥에 고정합니다 */
+      position: absolute;
+      bottom: 30px; /* 화면 맨 아래에서 30px 띄웁니다 */
+      left: 50%;
+      transform: translateX(-50%); /* 가로 정중앙 정렬 */
+      
+      transition: color 0.3s ease;
+      display: inline-block;
+      padding-bottom: 4px; /* 밑줄과 글자 사이의 간격 */
     }
 
+    /* 밑줄 애니메이션을 위한 가상 요소 설정 */
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      transform: scaleX(0); /* 초기 상태는 밑줄 가로 너비 0 */
+      height: 2px;          /* 밑줄 두께 */
+      bottom: 11%;
+      left: 0;
+      background-color: #ffffff; /* 기본 흰색 밑줄 */
+      transform-origin: bottom left;
+      transition: transform 0.3s ease-out, background-color 0.3s ease;
+    }
+
+    /* 호버 시 글자 색상과 함께 밑줄이 왼쪽에서 오른쪽으로 채워지는 효과 */
     .nav-link:hover {
-      color: #FF3DF2;
-      letter-spacing: 5px;
+      color: #111111;
+    }
+
+    .nav-link:hover::after {
+      transform: scaleX(1); /* 마우스를 올리면 100%로 가로 선이 늘어남 */
+      background-color: #111111; /* 글자 색에 맞춰 밑줄 색상 변경 */
     }
   </style>
 </head>
 <body>
-    <a href="exterior-KwonCho.html">
+    <a href="exterior-KwonCho.html" class="interior-link">
         <pre>
-oooooooooo                                     
-oooooo oo
-o o o
- o o wall                                ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ            ______________
-  o                                           ________                ㅣ               ㅣ
-                                             ㅣ  bed  ㅣ                ㅣ               ㅣ
-      o                                ______________           ㅡㅡㅣ               ㅣ
-        o o wall                            ㅣ             ㅣ         ㅣ   ㅣ               ㅣ
-        o                                  ㅣ             ㅣ         ㅣ   ㅣ               ㅣ
-         o    wall                         ㅣ             ㅣ         ㅣ   ㅣ    table     ㅣ
-         o wall                            ㅣ             ㅣ         ㅣ   ㅣ               ㅣ
-                                           ㅣ             ㅣ          ㅡㅡㅣ               ㅣ
-             o oo                          ㅣ             ㅣ             ㅣ               ㅣ
-ㅁㅁㅁㅁㅁㅁㅁㅁㅁ.                           ㅣ             ㅣ             ㅣ               ㅣ
-ㅁ             wall                         ㅣ             ㅣ              ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-ㅁ               o o                       ㅣ             ㅣ
-ㅁ                                         .ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ.
-ㅁ   cabinet1
-ㅁ    pw:!@#      oo                    ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-ㅁ   
-ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ  o 
-ㅁ                    o 
-ㅁ   cabinet2           o 
-ㅁ   pw: (*&^)           o o 
-ㅁ                        o 
-ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ   o 
-ㅁ                       o 
-ㅁ    cabinet3             o 
-ㅁ    pw: @$#$#$
-ㅁ                         oo 
-ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ           o o o
-ㅁ
-ㅁ
-ㅁ   cabinet4
-                               o oo 
- oooooo  o
- o o o oooooooooooooooooo         ooooooooooooooo   ... 000000ㅇㅇㅇㅇ00o0oo0000o   
- o oo   o o   o o 
-                                    o                                     
-                                     o    
-                                      o
-                                      o 
-             0
-             0
-         ㅇㅇㅇoㅇㅇㅇ                        o o o
-             0                             o o
-             0                               o
-             ㅣ                               o 
-              ㅣ                                o 
-             ㅣ                                o 
-              ㅣ                                 o
-             ㅣ                                 o 
- __+___*____ㅣ__*.+*_^^_____
-                                                   o 
-                                                   o o  
-                                                                             oo 
-                                                                             o  o oo 
-                                                                             o o o o
-
-                                                                               o oooooooooo 
-ooooo
-
-oooooooooo
-oooooooo                           ooooooo
-oo           ooooooooo
- oooooooooo                                oooooooooooooooooooooo 
- oooo                                                               _____
-  oo                                                               /     \
-                                                                  /  lamp \
-  oo                                                                 ㅣ
-  o                                                                  ㅣ
-                                                                     ㅣ
-                                                                    ㅡㅡㅡ
-    o  
-    o ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-                                  )
-                                  )
-    o         couch                )
-    o  o                           )
-    o oo                           )
-                couch      )
-    oo                             )
-    o       couch                  )
-    o                              )
-    o                              )
-    o                 couch        )
-    ooo                            )
-     o                             )
-     o         couch               )
-     oo                            )
-     o                             )
-      o                            )
-          o o ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-            o 
-
-             o  
-             o o  o o
-              o
-               o 
-                o
-                 o
-                 o 
-                  o
-                   o 
-                    o 
-                    o 
-                    o 
-                    o o
-                     o o o o  ooooooo
-                     o 
-                     o 
-                     oo
-                     ooo
-                     o
-                     o o
-                      o
-                        o
-                         o o
-                          o
-                           o  o ooo                     oooooooooooo
-
-                           o oooooooo                  
-                           grafity        ________                     grafity
-                            grafity      ㅣ piece ㅣ
-                            grafity      ㅣ   of  ㅣ                         grafity
-                           grafity       ㅣ  art  ㅣ
-                             grafity      ㅡㅡㅡㅡㅡㅡ                         grafity
-                            grafity           
-                             grafity          
-                                                                    painting
-                               grafity  grafity 
-                                grafity  
-                                grafity                             paint
-                                 grafity
-
-                                     grafity  grafity grafity               painttttt
-                                      grafity
-
-                                            grafity grafity               ^%%^^*^$*#&
-                                              grafity                           ^@%$
-                                              grafity                          @$^%@@
-                                              whi  te                     &^%#&^%#&%#&
-                                              w hi te 
-                                                whi t e                  kkkkkkkkkkk
-
-                                               oooooooooo
-                                               o o
-                                               oo kk kkkkkkkkk
-                                                 o o  o
-                                                 o   o
-
-                                                      o
-
-                                                      oooooooooooo
-                                                              oooooooo
-                                                              o 
-                                                              o
-                                                              o  
-
-                                                                     ooooo
-                                                                      o  
-                                                                           o  oo 
-
-                                                                              o o o o 
-                                                                               o o    o o 
-                                                                                      o o o o  
++-----------------------------------------------------------------------------------------+
+| [ WALL ]                                                                                |
+|   ooooooo                                                                               |
+|  oo     oo      +-----------------------+               +-----------------------+       |
+|  o       o      |        [ BED ]        |               |        [ TABLE ]       |       |
+|  o       o      |                       |               |                       |       |
+|                 |                       |               |                       |       |
+|                 +-----------------------+               |                       |       |
+|                                                         +-----------------------+       |
+|                                                                                         |
+| +-----------------+                                                                     |
+| |  [ CABINET 1 ]  |              ..ooooOOOOOOOOoooo..                                   |
+| |  pw: !@#        |           .ooOOOOOOOOOOOOOOOOOOOOoo.                                |
+| +-----------------+         .oOOOOOOOOOOOOOOOOOOOOOOOOOoo.                              |
+|                            .oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo.                            |
+| +-----------------+        oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo       +------------------+  |
+| |  [ CABINET 2 ]  |        oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo       |      [ LAMP ]    |  |
+| |  pw: (*&^)      |        oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo       |       ______     |  |
+| +-----------------+        .oOOOOOOOOOOOOOOOOOOOOOOOOOOOOOo        |      /      \    |  |
+|                             .oOOOOOOOOOOOOOOOOOOOOOOOOOOOo         |     |  lamp  |   |  |
+| +-----------------+           .ooOOOOOOOOOOOOOOOOOOOOoo.           |      \______/    |  |
+| |  [ CABINET 3 ]  |              ""ooooOOOOOOOOoooo""              |         ||       |  |
+| |  pw: @$#$#$     |                                                |         ||       |  |
+| +-----------------+                                                +------------------+  |
+|                                                                                         |
+| +-----------------+        +------------------------------+                             |
+| |  [ CABINET 4 ]  |        |           [ COUCH ]          |                             |
+| |                 |        |  )                        )  |                             |
+| +-----------------+        |  )                        )  |                             |
+|                            |  )                        )  |                             |
+|                            +------------------------------+                             |
+|                                                                                         |
+|                                                                                         |
+|        grafity                      +-----------+                     painting          |
+|   grafity   grafity                 |  piece of |               paint       paint       |
+|        grafity                      |    art    |                  painttttt            |
+|   grafity   grafity                +-----------+               ^%%^^*^$*#&              |
+|        grafity                                                 ^@%$                     |
+|                                                                @$^%@@                   |
+|               whi  te                                          &^%#&^%#&%#&             |
+|               w hi te                                          kkkkkkkkkk               |
+|               whi t e                                                                   |
+|                                                                                         |
+|   oo oo oooo    oooo ooo oo                                         ooooo ooo oo        |
++-----------------------------------------------------------------------------------------+
         </pre>
     </a>
 
-    <!-- 다시 아웃도어로 나가는 안내 (선택 사항) -->
-    <a href="../index.html" class="nav-link">&lt;&lt;home</a>
-    <br>
-    <br>
+    <a href="../index.html" class="nav-link">GO BACK TO STARTING PAGE</a>
 </body>
 </html>
