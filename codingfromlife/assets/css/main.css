@@ -1,258 +1,318 @@
-/* 기본 배경 설정 */
+@font-face {
+      font-family: "Neue Haas Grotesk";
+      src: url("../../../neuehaasgrotdisp-75bold-trial.otf") format("opentype");
+      font-weight: 600;
+      font-style: normal;
+    }
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background-color: #f4f6f9;
+  background: #15f58d;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: center; /* 내부 요소들을 세로축 기준 중앙 정렬 */
   align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* 전체 컨테이너 (귀가 잘리지 않도록 넉넉한 공간 확보) */
-.espeon-container {
+  height: 100vh;           /* 뷰포트 높이를 100%로 꽉 채움 */
+  overflow: hidden;        /* 화면 안에서만 깔끔하게 정렬되도록 제한 */
   position: relative;
-  width: 550px;
-  height: 450px;
+}
+
+/* 전체 아트보드 컨테이너 */
+.artboard {
+  position: relative;
+  width: 800px;
+  top: 50px;
   display: flex;
-  justify-content: center;
-  align-items: flex-end;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 
-#eye-toggle {
-  display: none;
+/* 디자인 라벨 */
+.title-label {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+  color: #a1ffd2;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  border-left: 3px solid #15f58d;
+  padding-left: 10px;
 }
 
-/* 에브이 전체 요소 래퍼 */
-.espeon-wrapper {
+/* 데스크 셋업 전체를 감싸는 컨테이너 */
+.desk-setup {
   position: relative;
   width: 100%;
-  height: 100%;
-  cursor: pointer;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 50px; /* 테이블과 푸터 사이의 수직 간격 정의 */
 }
 
-/* ===================================================
-   ★ 큰 귀 구현 (외곽 및 내부)
-   =================================================== */
-
-/* 귀 공통 설정 (기본 크기와 테두리 정리) */
-.ear {
-  position: absolute;
-  top: 25px;     /* 머리 위로 귀가 쫑긋 솟아오르도록 위치 조정 */
-  width: 80px;     /* 에브이의 날렵하고 슬림한 귀 폭 */
-  height: 250px;   /* 길쭉한 귀를 위해 높이 증가 */
-  background-color: #ecd4e2; /* 에브이 피부색 */
-  border: 4px solid #1a2229;
+/* --------------------------------------
+   테이블 (하얀색 데스크)
+-------------------------------------- */
+.table-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   z-index: 1;
 }
 
-/* 왼쪽 귀 */
-.ear.left {
-  left: 150px;    /* 두상 크기에 맞춰 좌우 위치를 미세 조정하세요 */
-  /* 왼쪽 위 끝을 뾰족하게, 아래쪽은 자연스럽게 이어지도록 조절 */
-  border-radius: 100% 10% 10% 40% / 100% 10% 10% 20%;
-  transform: rotate(-40deg); /* 조금 더 시원하게 바깥으로 뻗도록 각도 수정 */
-  transform-origin: bottom center;
+.table-top {
+  width: 720px;
+  height: 24px;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.15),
+    inset 0 -3px 0 #e0e0e0;
+  position: relative;
+  z-index: 3;
 }
 
-/* 오른쪽 귀 */
-.ear.right {
-  right: 150px;
-  /* 오른쪽 위 끝을 뾰족하게 */
-  border-radius: 10% 100% 40% 10% / 10% 100% 20% 10%;
-  transform: rotate(40deg);
-  transform-origin: bottom center;
+.table-edge {
+  width: 712px;
+  height: 8px;
+  background: #e6e6e6;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  position: relative;
+  z-index: 2;
 }
 
-/* 귀 내부 (어두운 청록색/진회색 부분) */
-.inner-ear {
-  position: absolute;
-  width: 55%;      /* 겉 귀보다 살짝 슬림하게 */
-  height: 85%;     /* 귀 안쪽 깊숙히 채워지도록 */
-  background-color: #23393d; 
-  border: 3px solid #1a2229;
-  bottom: 0;       /* 아래쪽에 딱 붙임 */
+.table-legs {
+  width: 640px;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
 }
 
-/* 왼쪽 귀 내부 */
-.ear.left .inner-ear {
-  left: 4px;      /* 귀의 바깥쪽 라인에 맞추기 위해 우측 정렬 */
-  border-radius: 100% 10% 10% 40% / 100% 10% 10% 20%;
-}
-
-/* 오른쪽 귀 내부 */
-.ear.right .inner-ear {
-  right: 4px;       /* 귀의 바깥쪽 라인에 맞추기 위해 좌측 정렬 */
-  border-radius: 10% 100% 40% 10% / 10% 100% 20% 10%;
-}
-
-
-/* ===================================================
-   얼굴 본체 및 이목구비 (패치 제거 및 z-index 정리)
-   =================================================== */
-.espeon-face {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 260px;
-  height: 210px;
-  background-color: #ecd4e2;
-  border: 4px solid #1a2229;
-  border-radius: 50% 50% 45% 45% / 62% 62% 45% 45%;
-  z-index: 3; /* 눈, 코, 보석을 담는 베이스 */
-}
-
-/* 이마 보석 */
-.gem {
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 28px;
-  height: 28px;
-  background-color: #d61c3c;
-  border: 4px solid #1a2229;
-  border-radius: 50%;
-}
-
-/* 눈 공통 (위치 정상화: top 120px로 복구) */
-.eye {
-  position: absolute;
-  top: 120px; 
-  width: 52px;
-  height: 42px;
-  background-color: #5d3875; 
-  border: 4px solid #1a2229;
-  transition: background-color 0.2s ease;
-}
-.eye.left {
-  left: 35px;
-  border-radius: 100% 30% 60% 40% / 70% 40% 60% 30%;
-  transform: rotate(70deg);
-}
-.eye.right {
-  right: 35px;
-  border-radius: 30% 100% 40% 60% / 40% 70% 30% 60%;
-  transform: rotate(-70deg);
-}
-
-/* 눈동자 */
-.pupil {
-  position: absolute;
-  top: 0px;
+.leg {
   width: 22px;
-  height: 22px;
-  background-color: #ffffff;
+  height: 180px;
+  background: linear-gradient(to right, #ffffff 60%, #e0e0e0 100%);
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
-.eye.left .pupil { right: 10px; border-radius: 50%; }
-.eye.right .pupil { left: 10px; border-radius: 50%; }
 
-/* 코 */
-.nose {
+/* --------------------------------------
+   맥북 레이아웃 (상시오픈 및 원근 왜곡 고정)
+-------------------------------------- */
+.macbook {
+  position: relative;
+  margin-bottom: -11px; /* 하판이 테이블에 살깝 걸치도록 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  
+  /* 3D 원근감 강도 고정 설정 */
+  perspective: 1000px;
+}
+
+/* 맥북 디스플레이 상판 어셈블리 */
+.screen-assembly {
+  width: 300px;
+  height: 215px;
+  background: #111111;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  padding: 12px 12px 18px 12px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  
+  /* 회전 중심축을 힌지와 맞닿는 하단 중앙으로 고정 */
+  transform-origin: bottom center;
+  
+  /* 상오픈 고정 및 입체 사다리꼴 원근 왜곡 강제 부여 */
+  transform: rotateX(0deg);
+  
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* 내부 스크린 영역 (상시 이미지 노출) */
+.display {
+  width: 104%;
+  height: 120%;
+  top: -2%;
+  
+  /* 검은 배경을 걷어내고 bg.png가 온전히 투과되도록 수정 */
+  background-color: transparent;
+  background-image: url("bg.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+/* 디스플레이 유리 글레어(반사광) 효과 상시 노출 */
+.display::before {
+  content: "";
   position: absolute;
-  bottom: 20px;
+  top: -50%;
+  left: -30%;
+  width: 160%;
+  height: 100%;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 60%);
+  transform: rotate(-25deg);
+  z-index: 5;
+  opacity: 1;
+}
+
+/* 웹캠 */
+.camera {
+  position: absolute;
+  top: 4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
-  height: 6px;
-  background-color: #1a2229;
+  width: 4px;
+  height: 4px;
+  background: #050505;
   border-radius: 50%;
+  box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.4);
 }
 
-/* ===================================================
-   ★ 뺨 양옆 깃털 (하나의 윤곽선으로 자연스럽게 합치기)
-   =================================================== */
-.whisker {
+/* 하단 로고 텍스트 디테일 */
+.bezel-bottom {
   position: absolute;
-  background-color: #ecd4e2;
-  /* 꼼수 대신 border를 각각 주어 얼굴 뒤에서 자연스럽게 뻗어나오게 만듭니다 */
-  border-top: 4px solid #1a2229;
-  border-bottom: 4px solid #1a2229;
-  z-index: 2; /* 얼굴(z-index: 3) 바로 뒤에 위치 */
+  bottom: 7px;
+  font-size: 6px;
+  color: #444444;
+  letter-spacing: 0px;
+  font-weight: 500;
 }
 
-/* 왼쪽 위 깃털 */
-.whisker.top-left {
-  left: -100px;      /* 얼굴 옆면에 자연스럽게 안착 */
-  bottom: 70px;
-  width: 110px;     /* 너무 튀어나오지 않게 크기 최적화 */
-  height: 45px;
-  border-left: 4px solid #1a2229; /* 바깥쪽 뾰족한 부분 테두리 */
-  border-radius: 0% 100% 20% 100% / 0% 100% 20% 100%;
-  transform: rotate(-25deg);
-}
-/* 왼쪽 아래 깃털 */
-.whisker.bottom-left {
-  left: -50px;
-  bottom: 55px;
-  width: 60px;
-  height: 20px;
-  border-left: 4px solid #1a2229;
-  border-radius: 0% 100% 20% 100% / 0% 100% 20% 100%;
-  transform: rotate(-45deg);
+/* 디스플레이와 본체를 이어주는 힌지(Hinge) 부속 */
+.hinge {
+  width: 320px;
+  height: 7px;
+  background: #0a0a0a;
+  border-bottom: 1px solid #222222;
 }
 
-/* 오른쪽 위 깃털 */
-.whisker.top-right {
-  right: -100px;
-  bottom: 70px;
-  width: 110px;
-  height: 45px;
-  border-right: 4px solid #1a2229; /* 바깥쪽 뾰족한 부분 테두리 */
-  border-radius: 100% 0% 100% 20% / 100% 0% 100% 20%;
-  transform: rotate(25deg);
-}
-/* 오른쪽 아래 깃털 */
-.whisker.bottom-right {
-  right: -50px;
-  bottom: 55px;
-  width: 60px;
-  height: 20px;
-  border-right: 4px solid #1a2229;
-  border-radius: 100% 0% 100% 20% / 100% 0% 100% 20%;
-  transform: rotate(45deg);
+/* 하판 본체 베이스 */
+.body-base {
+  position: relative;
+  width: 320px;
+  height: 10px;
+  background: linear-gradient(to bottom, #1a1a1a 0%, #0d0d0d 100%);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-top: 1px solid #2a2a2a;
+  box-shadow: 
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* ===================================================
-   ★ 클릭 토글 이벤트: 눈 색상 및 배경색 동시 변경
-   =================================================== */
-
-/* 기본 body 상태에도 부드러운 전환 효과 추가 */
-body {
-  transition: background-color 0.3s ease;
+/* 하판 중앙 홈 디테일 */
+.body-base::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 3px;
+  background: #050505;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
-/* ===================================================
-   ★ 클릭 토글 이벤트: 다크모드 전환 및 눈 발광 + 진동 효과
-   =================================================== */
+/* 배경 코드 그래픽 부가 스타일 */
+.code-lines {
+  width: 80%;
+  height: 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0.1;
+}
+.line { height: 6px; border-radius: 3px; background: #15f58d; }
+.line.short { width: 35%; background: #a1ffd2; }
+.line.medium { width: 60%; background: #ff79c6; }
+.line.long { width: 80%; background: #8be9fd; }
+.line.indent { margin-left: 16px; width: 50%; background: #f1fa8c; }
 
-/* 1. 배경색 변경 */
-body:has(#eye-toggle:checked) {
-  background-color: #15f58d; 
+
+/* --------------------------------------
+   하단 GO BACK TO TOP 링크 스타일 (완벽 정렬 완료)
+-------------------------------------- */
+.footer-container {
+  width: 100%;
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
 }
 
-/* 2. 눈 색깔 변경 및 형광 발광 효과 (더 극적인 연출을 위해 추가) */
-#eye-toggle:checked + .espeon-wrapper .eye {
-  background-color: #15f58e;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+.footer-note {
+  margin-top: 12px !important;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #f5f5f5;
+  opacity: 0.8;
 }
 
-/* 3. [핵심 추가] 토글되는 순간 에브이 전체가 미묘하게 지리릿- 떨리는 효과 */
-#eye-toggle:checked + .espeon-wrapper {
-  /* 0.2초 동안 'shaking' 애니메이션을 1번만 실행 */
-  animation: shaking 0.2s linear 1;
+.home-link {
+  color: #f5f5f5; /* 기본 텍스트 색상 적용 */
+  text-decoration: none;
+  font-family: 'Neue Haas Grotesk', Helvetica, Arial, sans-serif; 
+  font-size: 14px;
+  letter-spacing: 0px;
+  position: relative;
+  padding-bottom: 4px; /* 밑줄과 글자 사이의 간격 */
+  transition: color 0.3s ease;
+  display: inline-block;
+  font-weight: 700;
 }
 
-/* 4. 미묘한 진동을 만들어내는 애니메이션 키프레임 */
-@keyframes shaking {
-  0%   { transform: translate(0, 0) rotate(0deg); }
-  20%  { transform: translate(-2px, 1px) rotate(-0.5deg); }
-  40%  { transform: translate(1px, -1px) rotate(0.5deg); }
-  60%  { transform: translate(-1px, -1px) rotate(-0.2deg); }
-  80%  { transform: translate(2px, 1px) rotate(0.2deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}n: background-color 0.3s ease; /* 배경이 부드럽게 바뀌도록 애니메이션 추가 */
+/* 애니메이션 밑줄을 위한 가상 요소(::after) 설정 */
+.home-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0); /* 처음에는 밑줄의 가로 길이를 0으로 설정 */
+  height: 2px;          /* 밑줄 두께 */
+  bottom: 0;
+  left: 0;
+  background-color: #a1ffd2; /* 메인 페이지 테마인 민트색(#a1ffd2) 밑줄 */
+  transform-origin: bottom left;
+  transition: transform 0.3s ease-out, background-color 0.3s ease;
+}
+
+/* 호버 시 텍스트 및 밑줄 변화 효과 */
+.home-link:hover {
+  color: #ffffff; 
+}
+
+.home-link:hover::after {
+  transform: scaleX(1); /* 마우스를 올리면 왼쪽에서 오른쪽으로 슥 채워짐 */
+  background-color: #ffffff; /* 글자 색상 변화에 맞춰 밑줄도 흰색으로 변경 */
 }

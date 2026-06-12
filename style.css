@@ -212,3 +212,72 @@ body > * {
     ) scale(1.5);
   }
 }
+
+/* style.css 맨 아래에 추가할 코드 (기존 추가했던 인디케이터 스타일은 지우고 이것만 넣으시면 됩니다) */
+
+/* 히어로 섹션을 absolute 요소들의 기준점으로 설정 */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30vh;
+}
+
+/* 1. 상단 안내 문구 스타일 및 위치 */
+.spark-notice {
+  position: absolute;
+  top: 40px; /* 화면 상단에서 40px 떨어진 곳에 고정 */
+  transform: translateY(100%);
+  
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  color: var(--text);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* 2. 하단 스크롤 인디케이터 위치 */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px; /* 화면 하단에서 40px 영역에 고정 */
+  left: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+/* 스크롤 유도 작은 삼각형 */
+.scroll-arrow {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 12px solid var(--text);
+  opacity: 0.8;
+  
+  /* 부드럽게 위아래로 움직이는 애니메이션 */
+  animation: bounce 1.6s infinite ease-in-out;
+}
+
+/* 삼각형 바운스 효과 */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/* 모바일 화면 대응 */
+@media (max-width: 768px) {
+  .spark-notice {
+    top: 30px;
+  }
+  .scroll-indicator {
+    bottom: 30px;
+  }
+}
