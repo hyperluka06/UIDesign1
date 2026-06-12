@@ -227,3 +227,49 @@ h1:hover .popup-box {
     color: #444444;
     margin: 0;
 }
+
+/* ------------------------------------
+   [신규 추가] 하단 홈 링크 스타일 
+--------------------------------------- */
+
+/* 링크를 감싸는 컨테이너: 책장 아래 넉넉한 여백 제공 및 중앙 정렬 */
+.home-link-container {
+    text-align: center;
+    margin-top: 120px;   /* 마지막 선반과의 간격 */
+    margin-bottom: 50px; /* 화면 최하단 여백 */
+}
+
+.home-link {
+    color: #111111; /* 흰 배경에 잘 보이도록 어두운 색상으로 변경 */
+    text-decoration: none;
+    font-family: 'Neue Haas Grotesk', sans-serif; 
+    font-size: 14px;
+    font-weight: 600;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 6px; /* 밑줄과 글자 사이의 간격 */
+    transition: color 0.3s ease;
+}
+
+/* 애니메이션 밑줄을 위한 가상 요소(::after) 설정 */
+.home-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0); /* 처음에는 밑줄의 가로 길이를 0으로 설정 */
+    height: 2px;          /* 밑줄 두께 */
+    bottom: 0;
+    left: 0;
+    background-color: #15f58d; /* 책장 포인트 컬러인 연두색으로 맞춤 */
+    transform-origin: bottom left;
+    transition: transform 0.3s ease-out;
+}
+
+/* 호버 시 텍스트 및 밑줄 변화 효과 */
+.home-link:hover {
+    color: #15f58d; /* 마우스를 올리면 글자색도 연두색으로 변경 */
+}
+
+.home-link:hover::after {
+    transform: scaleX(1); /* 마우스를 올리면 왼쪽에서 오른쪽으로 100% 슥 채워짐 */
+}
