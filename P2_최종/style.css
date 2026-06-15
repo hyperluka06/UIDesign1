@@ -1,0 +1,278 @@
+@font-face {
+  font-family: "Neue Haas Grotesk";
+  src: url("../neuehaasgrotdisp-75bold-trial.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================================================
+   1. 기본 스타일 초기화 및 폰트 설정
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Impact; /* 과감하고 두꺼운 헤드라인 폰트 */
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* 스크롤바가 생기지 않도록 차단 */
+    background-color: #ffffff;
+}
+
+/* 왼쪽 바와 오른쪽 3D 영역을 가로로 배치 */
+.container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+/* ==========================================================================
+   루프 텍스트 사이드바 (Sidebar Marquee)
+   ========================================================================== */
+.sidebar {
+    display: flex;
+    width: 320px;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+
+    overflow: hidden;
+}
+
+.banner {
+    flex: 1;
+    position: relative;
+    overflow: hidden; /* 영역 밖으로 나가는 글자 숨김 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.yellow-bg {
+    background-color: #007bff;
+    color: #e1ff00;
+}
+
+.pink-bg {
+    background-color: #ffffff;
+    color: #ff007f;
+    border-right: 1px solid #f0f0f0;
+}
+
+/* 텍스트를 감싸는 워퍼를 세로(-90도)로 돌림 */
+.marquee-wrapper {
+    display: flex;
+    position: absolute;
+    white-space: nowrap;
+    transform: rotate(-90deg); /* 세로 방향 흐름을 위해 회전 */
+}
+
+/* 실질적으로 흐르는 텍스트 그룹 */
+.marquee-group {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: space-around;
+    min-width: 51.5%;
+    
+    /* 하단의 scroll 애니메이션을 15초 동안 무한(infinite) 반복, 일정한 속도(linear)로 실행 */
+    animation: scrollUp 15s linear infinite;
+}
+
+/* 역방향 그룹용 애니메이션 (반대로 흐르게 설정) */
+.marquee-group.reverse {
+    animation: scrollDown 15s linear infinite;
+}
+
+.marquee-group span {
+    font-size: 7rem; /* 텍스트가 길어졌으므로 폰트 크기를 살짝 조정 */
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}
+
+/* ==========================================================================
+   무한 루프 움직임을 만들어내는 Keyframes
+   ========================================================================== */
+
+/* 정방향: 오른쪽에서 왼쪽으로 이동 (세로 회전 상태라 위로 올라가는 것처럼 보임) */
+@keyframes scrollUp {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* 역방향: 왼쪽에서 오른쪽으로 이동 (아래로 내려가는 것처럼 보임) */
+@keyframes scrollDown {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+/* ==========================================================================
+   3. 오른쪽 메인 3D 콘텐츠 영역 (Main Content)
+   ========================================================================== */
+.main-content {
+    flex: 1;
+    position: relative;
+    height: 100%;
+    background-color: #ffffff;
+    
+    /* 💡 아래 두 줄을 새로 추가해 줍니다. */
+    z-index: 3; /* 사이드바(z-index: 1)보다 높게 설정하여 위를 덮게 만듭니다. */
+    box-shadow: -10px 0 30px rgba(0,0,0,0.05); /* 선택사항: 경계면에 은은한 그림자를 주면 물리적으로 겹쳐진 느낌이 더 살아납니다. */
+}
+
+/* Three.js가 생성하는 canvas 엘리먼트가 영역을 꽉 채우도록 강제 */
+.main-content canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* ==========================================================================
+   4. 우측 상단 UI 내비게이션 (MY 버튼)
+   ========================================================================== */
+.top-nav {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    z-index: 10; /* 💡 메인 영역(3)보다 높은 10으로 유지 혹은 상향 */
+}
+
+.my-link {
+    font-size: 1.2rem;
+    color: #000000;
+    text-decoration: none;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 2px;
+    transition: opacity 0.2s ease;
+}
+
+.my-link:hover {
+    opacity: 0.7;
+}
+
+/* ==========================================================================
+   루프 텍스트 사이드바 기본 및 호버 효과 (Sidebar & Hover Interaction)
+   ========================================================================== */
+.sidebar {
+    display: flex;
+    width: 300px;
+    height: 100%;
+    z-index: 5;
+    position: relative; /* 설명 레이어 배치를 위해 relative 설정 */
+    cursor: pointer;
+}
+
+.banner {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* 💡 부드럽게 사라지고 밀려나도록 트랜지션 설정 */
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), 
+                opacity 0.5s ease;
+    opacity: 1;
+    z-index: 2; /* 설명 레이어보다 위에 오도록 함 */
+}
+
+/* ==========================================================================
+   새로 추가되는 호버 인터랙션 스타일
+   ========================================================================== */
+
+/* 1. 사이드바에 마우스를 올렸을 때 (Hover State) */
+.sidebar:hover .yellow-bg {
+    transform: translateX(-100%); /* 왼쪽 배너는 왼쪽 화면 밖으로 슬라이드 */
+}
+
+.sidebar:hover .pink-bg {
+    transform: translateX(100%); /* 오른쪽 배너는 오른쪽 화면 밖으로 슬라이드 */
+}
+
+/* 2. 뒤쪽에 숨겨진 사이트 설명 레이어 */
+.sidebar-description {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* 두 배너를 합친 전체 너비만큼 차지 */
+    height: 100%;
+    background-color: #ffffff; /* 세련된 다크 모드 배경 (원하는 색상으로 변경 가능) */
+    display: flex;
+    /* 세로 정렬 가로 회전 텍스트 기조에 맞추어 세로형 레이아웃 구성 */
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    z-index: 1; /* 배너들 뒤에 위치 */
+}
+
+/* 설명 글 내부 콘텐츠 애니메이션 */
+.desc-content {
+    color: #ffffff;
+    max-width: 400px;
+    text-align: left;
+    
+    /* 처음에 살짝 아래에 내려두고 투명하게 설정 */
+    transform: translateY(30px);
+    opacity: 0;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.1s, 
+                opacity 0.6s ease 0.1s; /* 배너가 열린 뒤 살짝 이지 타임(Delay)을 줌 */
+}
+
+/* 3. 사이드바 호버 시 설명 글이 쓰윽 떠오르는 효과 */
+.sidebar:hover .desc-content {
+    transform: translateY(0); /* 제자리로 복귀 */
+    opacity: 1; /* 선명하게 노출 */
+}
+
+/* 설명 글 내부 상세 폰트 스타일 */
+.desc-content h3 {
+    font-family: "Neue Haas Grotesk";
+    font-size: 2.4rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    color: #111111;
+    letter-spacing: -1.2px;
+    line-height: 0.9;
+}
+
+.desc-content p {
+    font-family: "Neue Haas Grotesk";
+    font-size: 0.9rem;
+    line-height: 1.5;
+    font-weight: 400;
+    color: #111111;
+}
+
+/* ==========================================================================
+   3D 캔버스 하단 가이드 문구 스타일
+   ========================================================================== */
+.canvas-guide-text {
+    position: absolute;
+    bottom: 40px;          /* 바닥에서의 여백 */
+    left: 50%;
+    transform: translateX(-50%); /* 정확한 가로 중앙 정렬 */
+    font-family: "Neue Haas Grotesk";
+    font-size: 0.9rem;
+    color: #111111;        /* 묵직한 검은색 계열 */
+    text-transform: uppercase; /* 대문자 변환 */
+    letter-spacing: -0.3px;   /* 자간을 넓혀 세련된 느낌 유도 */
+    pointer-events: none;  /* 마우스 클릭이 이 텍스트에 막혀서 3D 키링 드래그가 안 되는 현상 방지 */
+    user-select: none;     /* 텍스트 드래그 선택 방지 */
+    z-index: 10;           /* 3D 캔버스보다 위에 오도록 설정 */
+    text-align: center;
+    white-space: nowrap;   /* 줄바꿈 방지 */
+}

@@ -197,3 +197,16 @@ footer {
 .modal-body span {
     font-weight: 600;
 }
+
+/* 현재 위치한 페이지의 탭 스타일 (하얀 배경 + 검은 글자) */
+.active-tab {
+    background-color: #fff !important;
+    color: #000 !important;
+    font-weight: 800;
+}
+
+/* 현재 페이지 탭에 마우스를 올렸을 때도 스타일이 유지되거나 자연스럽게 반응하도록 설정 */
+.active-tab:hover {
+    padding: 8px 16px; /* 현재 페이지 탭은 호버 시 좌우로 늘어나지 않도록 고정 (원하시면 36px로 변경 가능) */
+    cursor: default;
+}

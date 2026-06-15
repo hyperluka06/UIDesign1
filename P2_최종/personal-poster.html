@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COPO : Poster Laboratory</title>
+  <link rel="stylesheet" href="personal-style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <header class="top-nav-left">
+    <a href="P2.html" class="home-link">HOME</a>
+  </header>
+
+  <a href="#" class="btn-top">Personal Poster</a>
+
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-text">generating keywords...</div>
+  </div>
+
+  <div class="result-container" id="result-container">
+    <button class="btn-goback" id="goback-trigger">GO BACK</button>
+    
+    <h3>Design starting point.</h3>
+    <ul class="result-list" id="result-list"></ul>
+    
+    <button class="btn-again" id="again-trigger">generate again &rarr;</button>
+  </div>
+  
+  <div class="main-container">
+    
+    <main class="text-scroll-area">
+      <h1>this page will become your laboratory.</h1>
+      <h1>rather than creating something out of nothing, practice making a poster using the given conditions!</h1>
+      <h1>this is a chance not only to build your creativity, but also to explore the many possibilities for how that creativity can be brought to life.</h1>
+      <h1>let’s begin by pressing the button on the right :)</h1>
+    </main>
+
+    <aside class="interaction-area" id="three-canvas-container">
+      <button class="btn-generate" id="generate-trigger">
+        press me<br><span>to generate keywords</span>
+      </button>
+    </aside>
+
+  </div>
+
+  <script>
+    /* ==========================================================================
+           3D 키링 인터랙션 엔진 (우측 독립 영역)
+           ========================================================================== */
+        const FontLoader = THREE.FontLoader;
+        const TextGeometry = THREE.TextGeometry;
+
+        const scene = new THREE.Scene();
+        const container = document.getElementById('three-canvas-container');
+
+        const CAMERA_FOV = 38;
+        const camera = new THREE.PerspectiveCamera(
+          CAMERA_FOV, 
+          container.clientWidth / container.clientHeight,
+          0.1,
+          100
+        );
+
+        function getResponsiveCameraZ() {
+          const width = container.clientWidth;
+          if (width < 350) return 22;
+          else if (width < 500) return 22;
+          else return 16;
+        }
+        camera.position.set(0, 0, getResponsiveCameraZ()); 
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2; 
+        container.appendChild(renderer.domElement);
+
+        let ring;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        let startMousePos = { x: 0, y: 0 };
+        let startTouchPos = { x: 0, y: 0 };
+        const CLICK_THRESHOLD = 5;
+
+        let clickablePendants = [];
+
+        const targetLinks = [
+          "P2.html",
+          "", 
+          "personal-poster.html"
+        ];
+
+        const keyLight = new THREE.DirectionalLight("#ffffff", 3);
+        keyLight.position.set(5, 8, 5);
+        scene.add(keyLight);
+
+        const fillLight = new THREE.PointLight("#ffffff", 2);
+        fillLight.position.set(-5, 3, 4);
+        scene.add(fillLight);
+
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+        scene.environment = pmremGenerator.fromScene(new THREE.Scene()).texture;
+
+        const chromeMaterial = new THREE.MeshPhysicalMaterial({
+          color: "#ffffff",
+          metalness: 0.9,
+          roughness: 0.12,
+          clearcoat: 1,
+          clearcoatRoughness: 0.05
+        });
+
+        const pinkMaterial = new THREE.MeshStandardMaterial({
+          color: "#d34aa0",
+          roughness: 0.35,
+          metalness: 0.1
+        });
+
+        const ringRadius = 2.6;
+        const ringGeometry = new THREE.TorusGeometry(ringRadius, 0.09, 24, 100); 
+        ring = new THREE.Mesh(ringGeometry, chromeMaterial);
+        ring.rotation.set(0.3, -0.6, 0);
+        scene.add(ring);
+
+        const chainGeometry = new THREE.TorusGeometry(0.16, 0.05, 12, 32); 
+        const segmentsPerChain = 5; 
+        const segmentLength = 0.22; 
+
+        let chains = []; 
+        const GRAVITY = -0.015;  
+        const DAMPING = 0.80;    
+
+        const fontUrls = [ 
+          "https://threejs.org/examples/fonts/gentilis_bold.typeface.json",   
+          "https://threejs.org/examples/fonts/optimer_bold.typeface.json",
+          "https://threejs.org/examples/fonts/helvetiker_bold.typeface.json"     
+        ];
+
+        const textConfigs = [
+          { text: "Go back to main home", isEllipse: false },
+          { text: "Shared Posters", isEllipse: false },
+          { text: "Personal Poster", isEllipse: true }
+        ];
+
+        const fontLoader = new FontLoader();
+
+        textConfigs.forEach((config, index) => {
+          fontLoader.load(fontUrls[index], (font) => {
+            const angle = (index / textConfigs.length) * Math.PI * 2;
+            const localAttachPoint = new THREE.Vector3(Math.cos(angle) * ringRadius, Math.sin(angle) * ringRadius, 0);
+
+            ring.updateMatrixWorld();
+            const worldAttachPoint = localAttachPoint.clone().applyMatrix4(ring.matrixWorld);
+
+            let points = [];
+            for (let i = 0; i < segmentsPerChain; i++) {
+              const mesh = new THREE.Mesh(chainGeometry, chromeMaterial);
+              scene.add(mesh);
+              const pos = worldAttachPoint.clone().add(new THREE.Vector3(0, -(i + 1) * segmentLength, 0));
+              points.push({ type: 'chain', mesh: mesh, position: pos.clone(), oldPosition: pos.clone(), index: i });
+            }
+
+            let pendantGroup = new THREE.Group();
+            
+            const textGeo = new TextGeometry(config.text, {
+              font: font, 
+              size: index === 0 ? 0.22 : 0.20,  
+              height: 0.06,                     
+              curveSegments: 16,
+              bevelEnabled: true,
+              bevelThickness: 0.015,
+              bevelSize: 0.008,
+              bevelSegments: 4
+            });
+            textGeo.center(); 
+
+            let currentPendantLength = 0.4;
+
+            if (config.isEllipse) {
+              const ellipseGeo = new THREE.CircleGeometry(0.8, 64);
+              ellipseGeo.scale(1.4, 0.7, 1.0); 
+              const ellipseMesh = new THREE.Mesh(ellipseGeo, new THREE.MeshStandardMaterial({
+                color: "#000080", roughness: 0.15, side: THREE.DoubleSide
+              }));
+              pendantGroup.add(ellipseMesh);
+
+              const textMesh = new THREE.Mesh(textGeo, new THREE.MeshStandardMaterial({ color: "#ffffff", roughness: 0.3 }));
+              textMesh.position.z = 0.08;
+              pendantGroup.add(textMesh);
+              currentPendantLength = 0.8;
+            } else if (index === 1) {
+              const tagBg = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.7, 0.08), pinkMaterial);
+              pendantGroup.add(tagBg);
+              const textMesh = new THREE.Mesh(textGeo, new THREE.MeshStandardMaterial({ color: "#ffffff", roughness: 0.2 }));
+              textMesh.position.z = 0.06;
+              pendantGroup.add(textMesh);
+            } else {
+              const connectionRing = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.025, 16, 48), chromeMaterial);
+              connectionRing.position.y = 0.25;
+              pendantGroup.add(connectionRing);
+              const textMesh = new THREE.Mesh(textGeo, chromeMaterial);
+              pendantGroup.add(textMesh);
+            }
+
+            scene.add(pendantGroup);
+            pendantGroup.userData = { linkIndex: index };
+            clickablePendants.push(pendantGroup);
+
+            const pendantPos = worldAttachPoint.clone().add(
+              new THREE.Vector3(0, -(segmentsPerChain * segmentLength + currentPendantLength), 0)
+            );
+
+            points.push({ type: 'pendant', mesh: pendantGroup, position: pendantPos.clone(), oldPosition: pendantPos.clone() });
+            chains.push({ localAttachPoint: localAttachPoint, points: points, segmentLength: segmentLength, pendantLength: currentPendantLength });
+          });
+        });
+
+        const dom = renderer.domElement;
+
+        dom.addEventListener('mousedown', (e) => {
+          isDragging = true;
+          previousMousePosition = { x: e.clientX, y: e.clientY };
+          startMousePos = { x: e.clientX, y: e.clientY };
+        });
+
+        dom.addEventListener('mousemove', (e) => {
+          const rect = dom.getBoundingClientRect();
+          mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+          if (!isDragging) {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(clickablePendants, true);
+            dom.style.cursor = (intersects.length > 0) ? 'pointer' : 'default';
+          } else {
+            dom.style.cursor = 'grabbing';
+            const deltaMove = { x: e.clientX - previousMousePosition.x, y: e.clientY - previousMousePosition.y };
+            const deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+              deltaMove.y * 0.006, deltaMove.x * 0.006, 0, 'XYZ'
+            ));
+            ring.quaternion.multiplyQuaternions(deltaRotationQuaternion, ring.quaternion);
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+          }
+        });
+
+        window.addEventListener('mouseup', (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+          dom.style.cursor = 'default';
+
+          const distX = Math.abs(e.clientX - startMousePos.x);
+          const distY = Math.abs(e.clientY - startMousePos.y);
+
+          if (distX < CLICK_THRESHOLD && distY < CLICK_THRESHOLD) {
+            const rect = dom.getBoundingClientRect();
+            mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(clickablePendants, true);
+
+            if (intersects.length > 0) {
+              let targetGroup = intersects[0].object;
+              while (targetGroup.parent && !clickablePendants.includes(targetGroup)) {
+                targetGroup = targetGroup.parent;
+              }
+              if (clickablePendants.includes(targetGroup)) {
+                const linkIndex = targetGroup.userData.linkIndex;
+                const targetUrl = targetLinks[linkIndex];
+                if (targetUrl) window.location.href = targetUrl;
+              }
+            }
+          }
+        });
+
+        dom.addEventListener('touchstart', (e) => {
+          isDragging = true;
+          previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+          startTouchPos = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        });
+
+        dom.addEventListener('touchmove', (e) => {
+          if (!isDragging) return;
+          const deltaMove = { x: e.touches[0].clientX - previousMousePosition.x, y: e.touches[0].clientY - previousMousePosition.y };
+          const deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(new THREE.Euler(
+            deltaMove.y * 0.006, deltaMove.x * 0.006, 0, 'XYZ'
+          ));
+          ring.quaternion.multiplyQuaternions(deltaRotationQuaternion, ring.quaternion);
+          previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        });
+
+        window.addEventListener('touchend', (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+          if (e.changedTouches.length > 0) {
+            const distX = Math.abs(e.changedTouches[0].clientX - startTouchPos.x);
+            const distY = Math.abs(e.changedTouches[0].clientY - startTouchPos.y);
+
+            if (distX < CLICK_THRESHOLD && distY < CLICK_THRESHOLD) {
+              const rect = dom.getBoundingClientRect();
+              mouse.x = ((e.changedTouches[0].clientX - rect.left) / rect.width) * 2 - 1;
+              mouse.y = -((e.changedTouches[0].clientX - rect.top) / rect.height) * 2 + 1;
+
+              raycaster.setFromCamera(mouse, camera);
+              const intersects = raycaster.intersectObjects(clickablePendants, true);
+
+              if (intersects.length > 0) {
+                let targetGroup = intersects[0].object;
+                while (targetGroup.parent && !clickablePendants.includes(targetGroup)) {
+                  targetGroup = targetGroup.parent;
+                }
+                if (clickablePendants.includes(targetGroup)) {
+                  const linkIndex = targetGroup.userData.linkIndex;
+                  const targetUrl = targetLinks[linkIndex];
+                  if (targetUrl) window.location.href = targetUrl;
+                }
+              }
+            }
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          camera.aspect = container.clientWidth / container.clientHeight;
+          camera.updateProjectionMatrix();
+          camera.position.z = getResponsiveCameraZ();
+          renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        function animate() {
+          requestAnimationFrame(animate);
+          if (ring) {
+            ring.updateMatrixWorld();
+            chains.forEach(chain => {
+              const currentWorldAttachPoint = chain.localAttachPoint.clone().applyMatrix4(ring.matrixWorld);
+              chain.points.forEach(p => {
+                const velocity = p.position.clone().sub(p.oldPosition).multiplyScalar(DAMPING);
+                p.oldPosition.copy(p.position);
+                p.position.add(velocity);
+                p.position.y += GRAVITY;
+              });
+
+              for (let sim = 0; sim < 3; sim++) {
+                chain.points.forEach((p, i) => {
+                  if (i === 0) {
+                    const dir = p.position.clone().sub(currentWorldAttachPoint);
+                    dir.normalize();
+                    p.position.copy(currentWorldAttachPoint.clone().add(dir.multiplyScalar(chain.segmentLength)));
+                  } else {
+                    const prevP = chain.points[i - 1];
+                    const targetLen = (p.type === 'pendant') ? chain.pendantLength : chain.segmentLength;
+                    const dir = p.position.clone().sub(prevP.position);
+                    dir.normalize();
+                    p.position.copy(prevP.position.clone().add(dir.multiplyScalar(targetLen)));
+                  }
+                });
+              }
+
+              chain.points.forEach((p, i) => {
+                p.mesh.position.copy(p.position);
+                if (p.type === 'chain') {
+                  const targetLook = (i === 0) ? currentWorldAttachPoint : chain.points[i - 1].position;
+                  p.mesh.lookAt(targetLook);
+                  p.mesh.rotateX(Math.PI / 2); 
+                  if (p.index % 2 === 0) p.mesh.rotateY(Math.PI / 2); 
+                } else if (p.type === 'pendant') {
+                  p.mesh.lookAt(p.mesh.position.clone().add(new THREE.Vector3(0, 0, 1)));
+                }
+              });
+            });
+          }
+          renderer.render(scene, camera);
+        }
+        animate();
+  </script>
+
+  // 스크립트 코드 수정 및 추가
+  <script>
+    // 디자인 관련 랜덤 조건 데이터 베이스 (기존 유지)
+    const designConditions = {
+      concept: ['Retro Future', 'Cyberpunk', 'Swiss Minimalism', 'Acid Graphics', 'Y2K Aesthetic', 'Bauhaus', 'Brutalisim'],
+      color: ['Neon Blue & Hot Pink', 'Monochrome & Red Accent', 'Earth Tone & Forest Green', 'Electric Violet & Acid Lime', 'Pastel Dream'],
+      typography: ['Bold Serif', 'Geometric Sans-serif', 'Kinetic Typography', 'Handwritten Script', 'Distorted Display Font'],
+      element: ['Grainy Texture', '3D Metallic Object', 'Abstract Geometric Shapes', 'Halftone Pattern', 'Collage & Mixed Media']
+    };
+
+    const triggerBtn = document.getElementById('generate-trigger');
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const resultContainer = document.getElementById('result-container');
+    const resultList = document.getElementById('result-list');
+    
+    // 신규 추가된 버튼 인터페이스
+    const gobackBtn = document.getElementById('goback-trigger');
+    const againBtn = document.getElementById('again-trigger');
+
+    // 핵심 로직: 조건 생성 공통 함수
+    function generateRandomConditions() {
+      resultList.innerHTML = ''; // 이전 조건 텍스트 초기화
+      
+      const selectedConditions = [
+        `Concept: ${designConditions.concept[Math.floor(Math.random() * designConditions.concept.length)]}`,
+        `Color: ${designConditions.color[Math.floor(Math.random() * designConditions.color.length)]}`,
+        `Typography: ${designConditions.typography[Math.floor(Math.random() * designConditions.typography.length)]}`,
+        `Element: ${designConditions.element[Math.floor(Math.random() * designConditions.element.length)]}`
+      ];
+
+      selectedConditions.forEach((cond, index) => {
+        const li = document.createElement('li');
+        li.textContent = cond;
+        li.style.animationDelay = `${index * 0.15}s`;
+        resultList.appendChild(li);
+      });
+    }
+
+    // 1. 최초 'press me' 버튼 클릭 이벤트
+    triggerBtn.addEventListener('click', () => {
+      triggerBtn.style.display = 'none'; // 메인 버튼 숨기기
+      resultContainer.classList.remove('active');
+
+      loadingOverlay.classList.add('active'); // 2초 로딩 오버레이 시작
+
+      setTimeout(() => {
+        loadingOverlay.classList.remove('active');
+        generateRandomConditions(); // 조건 바인딩
+        resultContainer.classList.add('active'); // 결과창 노출
+      }, 2000);
+    });
+
+    // 2. [수정] 'generate again' 다시 뽑기 버튼 클릭 이벤트
+    againBtn.addEventListener('click', () => {
+      // 결과창을 잠시 숨기고 로딩 오버레이를 다시 띄웁니다.
+      resultContainer.classList.remove('active');
+      loadingOverlay.classList.add('active');
+
+      // 똑같이 2초(2000ms) 뒤에 새로운 키워드를 세팅하고 결과창을 보여줍니다.
+      setTimeout(() => {
+        loadingOverlay.classList.remove('active'); // 로딩 숨기기
+        generateRandomConditions(); // 새로운 조건 랜덤 추출 및 바인딩
+        resultContainer.classList.add('active'); // 결과창 다시 띄우기
+      }, 2000);
+    });
+
+    // 3. 'GO BACK' 버튼 클릭 이벤트 (기존 유지)
+    gobackBtn.addEventListener('click', () => {
+      resultContainer.classList.remove('active'); // 결과창 닫기
+      triggerBtn.style.display = 'flex'; // 메인 우측 버튼 다시 살리기
+    });
+
+    // 기존 자동 스크롤 스크립트 (유지)
+    window.addEventListener('DOMContentLoaded', () => {
+      const scrollArea = document.querySelector('.text-scroll-area');
+      const scrollSpeed = 0.8; 
+      let autoScrollInterval;
+
+      function startAutoScroll() {
+        autoScrollInterval = setInterval(() => {
+          scrollArea.scrollTop += scrollSpeed;
+          const isEnd = scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - 1;
+          if (isEnd) stopAutoScroll();
+        }, 16);
+      }
+
+      function stopAutoScroll() {
+        if (autoScrollInterval) {
+          clearInterval(autoScrollInterval);
+          autoScrollInterval = null;
+          scrollArea.removeEventListener('wheel', stopAutoScroll);
+          scrollArea.removeEventListener('touchstart', stopAutoScroll);
+        }
+      }
+      startAutoScroll();
+      scrollArea.addEventListener('wheel', stopAutoScroll, { passive: true });
+      scrollArea.addEventListener('touchstart', stopAutoScroll, { passive: true });
+    });
+
+  </script>
+</body>
+</html>
+</body>
+</html>

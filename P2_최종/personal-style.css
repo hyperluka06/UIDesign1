@@ -1,0 +1,381 @@
+/* ==========================================================================
+   1. 기본 스타일 초기화 및 전체 구획
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #0000ff; /* 기본 메인 블루 컬러 */
+  /* [수정] 메인 페이지 스크롤을 자연스럽게 허용하기 위해 overflow 허용 */
+  overflow-x: hidden; 
+}
+
+/* 전체 화면 분할 */
+.main-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   2. 상단 UI 요소 (HOME 및 상단 타원형 버튼)
+   ========================================================================== */
+
+/* 좌측 상단 HOME 네비게이션 위치 정의 */
+.top-nav-left {
+  position: fixed;
+  top: 20px; /* Find in COPO 버튼과 높이를 맞춰서 균형감 있게 배치 */
+  left: 40px;
+  z-index: 100;
+}
+
+/* [수정] HOME 링크를 완벽한 타원형 버튼으로 변경 */
+.home-link {
+  font-family: 'helvetica';
+  font-weight: 700;
+  font-size: 13px; /* 다른 버튼들과 폰트 크기 통일 */
+  color: #111111;  /* 초기 글자색: 파란색 */
+  background-color: #ffffff; /* 초기 배경색: 흰색 */
+  
+  /* 테두리를 주어 기본 상태에서도 타원 형태가 보이도록 설정 */
+  text-decoration: none;
+  
+  /* 타원형 크기 설정 */
+  width: 80px;
+  height: 35px; /* Find in COPO 버튼과 세로 높이 통일 */
+  border-radius: 50%; /* 50%로 설정하여 타원형으로 만듦 */
+  
+  /* 글자가 타원 정중앙에 오도록 설정 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  /* 호버 시 부드러운 전환 효과 */
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* [추가] HOME 버튼 호버 시 색상 반전 효과 */
+.home-link:hover {
+  background-color: #111111; /* 배경을 파란색으로 */
+  color: #ffffff;            /* 글자를 흰색으로 */
+  opacity: 1; /* 기존의 opacity 흐려지는 효과 제거 */
+}
+
+/* 상단 중앙 고정 버튼 */
+.btn-top {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #0000ff;
+  color: #ffffff;
+  
+  width: 140px;
+  height: 55px;
+  border-radius: 50%; 
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: bold;
+  z-index: 100;
+  cursor: default;
+  
+  transition: background-color 0.2s ease, color 0.2s ease; 
+}
+
+/* ==========================================================================
+   3. 좌측 스크롤 텍스트 영역
+   ========================================================================== */
+.text-scroll-area {
+  width: 55%; 
+  height: 100vh;      /* [필수] 화면 높이만큼 꽉 채우기 */
+  overflow-y: auto;   /* [필수] 내부 콘텐츠가 넘치면 자체 세로 스크롤 생성 */
+  background-color: #ffffff; 
+  padding: 120px 50px 80px 5%;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 2. Firefox 스크롤바 숨기기 */
+  scrollbar-width: none; 
+
+  /* 3. Internet Explorer, Edge 스크롤바 숨기기 */
+  -ms-overflow-style: none; 
+  /* ────────────────────────────────────────────────── */
+}
+
+
+.text-scroll-area h1 {
+  font-family: 'helvetica';
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 40px;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   4. 우측 3D 인터랙션 및 우측 고정 버튼 영역
+   ========================================================================== */
+.interaction-area {
+  width: 45%; /* 화면의 45% 차지 */
+  height: 100vh;
+  
+  /* [수정] 스크롤을 내려도 오른쪽 화면 전체가 항상 제자리에 고정되도록 fixed 변경 */
+  position: fixed; 
+  top: 0;
+  right: 0;
+  
+  background-color: #ffffff;
+  z-index: 10;
+}
+
+/* Three.js Canvas 강제 세팅 */
+.interaction-area canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* 우측 고정 타원형 버튼 (캔버스 우측에 플로팅) */
+.btn-generate {
+  position: absolute;
+  top: 45vh; /* 화면 세로 정중앙 근처 고정 */
+  right: 40px; 
+  z-index: 50; /* 3D 캔버스 위에 배치 */
+  
+  background-color: #0000ff;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  
+  width: 240px;
+  height: 90px;
+  border-radius: 50%; 
+  
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.0;
+  text-align: center;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 8px; 
+  
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* 우측 버튼 반전 호버 효과 */
+.btn-generate:hover {
+  background-color: #ffffff;
+  color: #0000ff;
+  outline: 1px solid #0000ff;
+}
+
+/* ==========================================================================
+   5. 키워드 생성 애니메이션 및 결과창 스타일 (기능 확장 버전)
+   ========================================================================== */
+
+/* 화면 전체를 덮는 흰색 오버레이 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 화면 중앙에 고정되어 은은하게 깜빡이는 로딩 텍스트 */
+.loading-text {
+  font-family: 'helvetica';
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0000ff;
+  text-align: center;
+  white-space: nowrap;
+  animation: pulseLoading 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseLoading {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* 결과창 스타일 */
+.result-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff; 
+  z-index: 210;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.result-container.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* [추가] HOME 버튼 스타일과 100% 일치하게 마감한 GO BACK 버튼 */
+.btn-goback {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  
+  font-family: 'helvetica';
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.05em;
+  color: #111111;
+  background-color: #ffffff;
+  border: 1px solid #ffffff; /* 테두리 포함 구조 통일 */
+  cursor: pointer;
+  
+  width: 90px;
+  height: 45px;
+  border-radius: 50%; /* HOME과 같은 완벽한 타원형 */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-goback:hover {
+  background-color: #111111;
+  color: #ffffff;
+}
+
+/* 가로가 긴 진짜 타원형(Ellipse) 타이틀 오브젝트 */
+.result-container h3 {
+  font-family: 'helvetica';
+  font-size: 15px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #0000ff;
+  
+  width: 320px;
+  height: 65px;
+  border-radius: 50%; 
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  margin-bottom: 50px;
+  
+  animation: fadeInDown 0.5s ease-out forwards;
+}
+
+/* 2x2 그리드 조건 컨테이너 */
+.result-list {
+  list-style: none;
+  width: 100%;
+  max-width: 800px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 50px; /* 아래 generate again 버튼과의 간격 확보 */
+}
+
+/* 직사각형 네모 카드 스타일 */
+.result-list li {
+  font-family: 'helvetica';
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0000ff;
+  text-align: center;
+  
+  background-color: #ffffff;
+  border: 1px solid #0000ff;
+  padding: 25px 20px;
+  border-radius: 4px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: keep-all;
+  
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards ease-out;
+}
+
+/* [추가] 화면 하단에 위치할 누를 수 있는 'generate again ->' 버튼 스타일 */
+.btn-again {
+  font-family: 'helvetica';
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0000ff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-transform: lowercase; /* 소문자 컨셉 유지 */
+  letter-spacing: -0.01em;
+  padding: 10px 20px;
+  
+  /* 마우스 오버 시 살짝 투명해지거나 반응하는 미니멀 링킹 효과 */
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-again:hover {
+  opacity: 0.6;
+  transform: translateX(4px); /* 오른쪽 화살표 방향으로 살짝 밀리는 인터랙션 포인트 */
+}
+
+/* 애니메이션 */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

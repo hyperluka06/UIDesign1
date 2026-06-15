@@ -1,0 +1,326 @@
+/* ==========================================================================
+   Shared Posters 레이아웃 커스텀 (좌측 UI + 우측 키링 스플릿 뷰)
+   ========================================================================== */
+
+html, body {
+    background-color: #ffbce3;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* 전체 화면 분할 그리드 */
+.shared-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.shared-container {
+    flex: 7;
+    padding: 120px 24px 120px 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    /* 스크롤 핵심 설정 */
+    height: 100vh;            /* 부모의 높이를 100vh로 유지 */
+    overflow-y: auto;         /* 내부 콘텐츠가 길어지면 스크롤 발생 */
+    
+    /* 스크롤바 숨김 */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.shared-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* 우측 3D 키링 패널 (전체 화면의 30%) */
+.keyring-sidebar {
+    flex: 3;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    display: block;
+}
+
+.keyring-sidebar canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* ==========================================================================
+   💡 [수정] 고정형 상단 네비게이션 헤더 (전체 뷰포트 기준 절대 레이어 배치)
+   ========================================================================== */
+.badge-wrapper {
+    position: fixed;            /* 💡 그리드 구역에 구애받지 않고 브라우저 창 기준으로 띄움 */
+    top: 40px;
+    left: 0;
+    width: 100vw;               /* 화면 전체 폭 수용 */
+    height: auto;
+    padding: 0 24px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    z-index: 1000;              /* 포스터 및 키링 캔버스보다 위에 위치하도록 계층 상향 */
+    pointer-events: none;       /* 💡 래퍼 영역 자체는 마우스 클릭을 투과시켜 뒤의 키링 클릭 방해 차단 */
+}
+
+/* 상단 중앙 페이지 뱃지 고정 */
+.page-badge {
+    position: absolute;
+    left: 50%;                  /* 💡 화면 중앙 정렬 정석 공식 */
+    transform: translateX(-50%);
+    font-family: 'Helvetica';
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.03em;
+    background-color: #ffffff;
+    color: #111111;            
+    padding: 8px 24px;
+    border: 1px solid #111111;
+    pointer-events: auto;       /* 클릭/선택 이벤트 복원 */
+}
+
+/* 좌측 끝 Home 버튼 고정 */
+.home-btn {
+    position: absolute;
+    left: 24px;                 /* 화면 맨 좌측 정렬 */
+    font-family: 'Helvetica';
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: -0.03em;
+    padding: 6px 15px;
+    text-decoration: none;
+    background-color: #ffffff;
+    color: #111111;            
+    border: 0.9px solid #111111;
+    transition: background-color 0.25s ease, color 0.25s ease; 
+    pointer-events: auto;
+}
+
+.home-btn:hover {
+    background-color: #111111;
+    color: #ffffff;
+}
+
+/* 우측 끝 카운트다운 타이머 고정 */
+.countdown-timer {
+    position: absolute;
+    right: 24px;                /* 💡 화면 맨 우측(즉, 키링 사이드바의 우측 상단)에 정렬 */
+    font-family: 'Helvetica';
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.03em;
+    padding: 8px 24px;
+    background-color: #111111;
+    color: #ffffff;            
+    border: 1px solid #111111;
+    cursor: default;
+    user-select: none;
+    pointer-events: auto;
+}
+
+/* ==========================================================================
+   기존 UI 세부 본문 컴포넌트 스타일
+   ========================================================================== */
+.main-heading {
+    font-family: 'Helvetica';
+    font-size: 4.8rem;
+    letter-spacing: -0.06em;
+    color: #111111;
+    text-align: center;
+    line-height: 0.95;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    width: 100%;
+}
+
+.keyword-grid {
+    display: grid;
+    margin: 0 auto;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 14px;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 40px;
+}
+
+.keyword-btn {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: 'Helvetica', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: -0.04em;
+    color: #111111;            
+    background-color: #ffffff;
+    padding: 16px 20px;
+    border: 1px solid #111111;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.upload-link {
+    font-family: 'Helvetica';
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    font-size: 1rem;
+    color: #ffffff;               
+    text-decoration: none;
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 2px;
+    text-transform: uppercase;
+
+    display: inline-block;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+    border-bottom: 2px solid transparent; /* 기본값 투명 */
+}
+
+.upload-link:hover {
+    color: #111111;              /* 글자색이 검정으로 변함 */
+    border-bottom: 2px solid #111111; /* 밑줄이 나타남 */
+    transform: translateX(10px);  /* 오른쪽으로 살짝 이동 */
+}
+
+.poster-feed {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 20px;
+    row-gap: 40px;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.poster-item {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1.25;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    cursor: pointer;
+}
+
+.poster-item:hover {
+    transform: translateY(-5px);
+}
+
+.poster-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dummy-black {
+    background-color: #ffbce3; 
+    border: 1px solid #ffffff;
+}
+
+/* 포스터 모달 구조 */
+.poster-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.poster-modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    max-width: 90%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-content img {
+    width: 100%;
+    height: 82%;
+    object-fit: contain;
+    border-radius: 16px;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 3.5rem;
+    cursor: pointer;
+}
+
+.modal-action-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    width: 100%;
+    justify-content: center;
+}
+
+.action-btn {
+    font-family: 'Helvetica';
+    font-weight: 550;
+    font-size: 0.95rem;
+    padding: 10px 24px;
+    cursor: pointer;
+}
+
+.replace-btn {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.delete-btn {
+    background-color: #d62828;
+    color: #ffffff;
+    border: 1px solid #d62828;
+}
+
+/* 미디어 쿼리 최적화 */
+@media (max-width: 1024px) {
+    .shared-layout { flex-direction: column; }
+    .shared-container { width: 100%; padding-top: 140px; }
+    .keyring-sidebar { width: 100%; height: 50vh; position: relative; }
+    .main-heading { font-size: 3.5rem; }
+    .poster-feed { grid-template-columns: repeat(2, 1fr); }
+    
+    /* 모바일 환경 겹침 방지 대응 고정 해제 */
+    .badge-wrapper { position: absolute; top: 20px; flex-direction: column; gap: 10px; height: auto; }
+    .page-badge, .home-btn, .countdown-timer { position: static; transform: none; width: auto; text-align: center; pointer-events: auto; }
+}
