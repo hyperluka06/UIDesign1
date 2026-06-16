@@ -455,25 +455,29 @@
     window.addEventListener('DOMContentLoaded', () => {
       const scrollArea = document.querySelector('.text-scroll-area');
       const scrollSpeed = 0.8; 
-      let autoScrollInterval;
+      let requestID;
 
-      function startAutoScroll() {
-        autoScrollInterval = setInterval(() => {
+      function autoScroll() {
+        // 끝까지 도달했는지 확인
+        const isEnd = scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - 1;
+        
+        if (!isEnd) {
           scrollArea.scrollTop += scrollSpeed;
-          const isEnd = scrollArea.scrollTop + scrollArea.clientHeight >= scrollArea.scrollHeight - 1;
-          if (isEnd) stopAutoScroll();
-        }, 16);
+          requestID = requestAnimationFrame(autoScroll); // 다음 프레임에 다시 호출
+        } else {
+          cancelAnimationFrame(requestID);
+        }
       }
 
       function stopAutoScroll() {
-        if (autoScrollInterval) {
-          clearInterval(autoScrollInterval);
-          autoScrollInterval = null;
-          scrollArea.removeEventListener('wheel', stopAutoScroll);
-          scrollArea.removeEventListener('touchstart', stopAutoScroll);
-        }
+        cancelAnimationFrame(requestID);
+        scrollArea.removeEventListener('wheel', stopAutoScroll);
+        scrollArea.removeEventListener('touchstart', stopAutoScroll);
       }
-      startAutoScroll();
+
+      // 시작
+      requestID = requestAnimationFrame(autoScroll);
+      
       scrollArea.addEventListener('wheel', stopAutoScroll, { passive: true });
       scrollArea.addEventListener('touchstart', stopAutoScroll, { passive: true });
     });
